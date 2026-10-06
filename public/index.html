@@ -1,0 +1,2189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CodeLesson AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F6; --surface:#FFFFFF; --surface2:#F6F8FB; --ink:#182033; --muted:#5B6680;
+  --line:#D6DCE7; --accent:#2E57E8; --accent-ink:#FFFFFF; --accent-soft:#E3E9FD;
+  --marker:#FFD54A; --danger:#B4232A; --danger-soft:#FBE6E7; --ok:#17784C; --ok-soft:#E1F3EA;
+  --warn-soft:#FFF5D6;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1320; --surface:#171E30; --surface2:#1C2438; --ink:#E7EBF4; --muted:#9AA5BD;
+    --line:#2A3550; --accent:#7B95FF; --accent-ink:#0F1320; --accent-soft:#232F55;
+    --danger:#FF8A8F; --danger-soft:#3A1D24; --ok:#6FD3A0; --ok-soft:#173226; --warn-soft:#3A3218;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1320; --surface:#171E30; --surface2:#1C2438; --ink:#E7EBF4; --muted:#9AA5BD;
+  --line:#2A3550; --accent:#7B95FF; --accent-ink:#0F1320; --accent-soft:#232F55;
+  --danger:#FF8A8F; --danger-soft:#3A1D24; --ok:#6FD3A0; --ok-soft:#173226; --warn-soft:#3A3218;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Bricolage Grotesque",Figtree,system-ui,sans-serif;line-height:1.15;margin:0;font-weight:700}
+h1{font-size:clamp(28px,4vw,40px);letter-spacing:-.01em}
+h2{font-size:24px}
+h3{font-size:18px}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.topbar{display:flex;align-items:center;gap:16px;padding:12px 24px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:10}
+.brand{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;font-family:"Bricolage Grotesque",Figtree,sans-serif;font-weight:700;font-size:20px}
+.mark{width:30px;height:30px;border-radius:7px;background:var(--ink);position:relative;flex:none}
+.mark::before{content:"";position:absolute;left:7px;top:8px;width:9px;height:3px;background:var(--bg);border-radius:2px;box-shadow:0 6px 0 var(--bg)}
+.mark::after{content:"";position:absolute;left:7px;right:6px;top:19px;height:4px;background:var(--marker);border-radius:2px}
+.topbar .spacer{flex:1}
+.who{color:var(--muted);font-size:14px}
+main{max-width:1200px;margin:0 auto;padding:28px 24px 72px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 16px;border-radius:9px;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.big{padding:13px 24px;font-size:17px;border-radius:11px}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--ink);border-color:var(--line)}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:5px 10px;font-size:14px;border-radius:7px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:12px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--surface2);border:1px solid var(--line)}
+.chip i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.page-head p{margin-top:6px}
+/* dashboard */
+.lesson-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.lesson-item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.lesson-item h3{font-size:19px}
+.lesson-item .meta{font-size:14px;color:var(--muted)}
+.lesson-item .actions{margin-top:auto;display:flex;gap:8px}
+.empty{border:2px dashed var(--line);border-radius:14px;padding:40px 24px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.samples{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:12px}
+.sample{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer}
+.sample:hover{border-color:var(--accent)}
+.sample strong{font-size:16px}
+.section-title{margin:36px 0 4px}
+/* forms */
+.form{display:grid;grid-template-columns:1fr 1fr;gap:18px 22px}
+.form .full{grid-column:1/-1}
+label.field{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:15px}
+label.field .hint{font-weight:400;color:var(--muted);font-size:13px}
+input[type=text],select,textarea{width:100%;border:1px solid var(--line);background:var(--surface2);border-radius:9px;padding:10px 12px;font-weight:400}
+textarea{resize:vertical;min-height:84px}
+textarea.code{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;font-size:14px;line-height:1.5;tab-size:4}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{border:1px solid var(--line);background:var(--surface2);padding:8px 14px;border-radius:9px;cursor:pointer;font-weight:500;font-size:15px}
+.seg input:checked+span{font-weight:700}
+.seg label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.seg label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+.platform-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.platform-pick label{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line);border-radius:11px;padding:12px 14px;cursor:pointer;background:var(--surface2)}
+.platform-pick label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.platform-pick label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+.platform-pick input{position:absolute;opacity:0;pointer-events:none}
+.platform-pick strong{font-size:16px}
+.platform-pick span{font-size:13px;color:var(--muted)}
+.notice{border-radius:10px;padding:12px 14px;font-size:15px;border:1px solid var(--line);background:var(--surface2)}
+.notice.err{background:var(--danger-soft);border-color:transparent;color:var(--danger)}
+.notice.warn{background:var(--warn-soft);border-color:transparent}
+.notice.ok{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.notice ul{margin:6px 0 0;padding-left:20px}
+/* generating */
+.gen{max-width:680px;margin:40px auto}
+.steps{list-style:none;margin:22px 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.steps li{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.steps .dot{width:20px;height:20px;border-radius:50%;flex:none;margin-top:2px;border:2px solid var(--line)}
+.steps li.run .dot{border-color:var(--accent);border-top-color:transparent;animation:spin 1s linear infinite}
+.steps li.done .dot{background:var(--ok);border-color:var(--ok)}
+.steps li.fail .dot{background:var(--danger);border-color:var(--danger)}
+.steps li .sub{font-size:13px;color:var(--muted)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.steps li.run .dot{animation:none;border-top-color:var(--accent)}}
+/* editor */
+.editor{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:start}
+.scene-nav{position:sticky;top:84px;display:flex;flex-direction:column;gap:4px;max-height:calc(100vh - 110px);overflow:auto}
+.scene-nav button{display:flex;gap:10px;align-items:baseline;text-align:left;background:transparent;border:1px solid transparent;border-radius:9px;padding:8px 10px;cursor:pointer}
+.scene-nav button:hover{background:var(--surface)}
+.scene-nav button.on{background:var(--surface);border-color:var(--line);font-weight:600}
+.scene-nav .n{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);min-width:20px}
+.scene-nav .t{flex:1}
+.scene-nav .w{color:var(--danger);font-size:12px}
+.scene-nav hr{border:0;border-top:1px solid var(--line);margin:8px 0}
+.beat{border:1px solid var(--line);border-radius:11px;padding:14px;background:var(--surface2);display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.beat .bh{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
+.beat .bh b{font-size:14px;color:var(--muted);font-weight:600}
+.beat textarea{background:var(--surface);min-height:96px}
+.beat .err{grid-column:1/-1;color:var(--danger);font-size:13px}
+.quiz-item{border:1px solid var(--line);border-radius:11px;padding:14px;background:var(--surface2);display:flex;flex-direction:column;gap:8px}
+.dsl-help{font-size:13px;color:var(--muted)}
+.dsl-help code{font-family:"JetBrains Mono",monospace;font-size:12px;background:var(--surface2);padding:1px 5px;border-radius:5px;border:1px solid var(--line)}
+details summary{cursor:pointer;font-weight:600}
+/* studio */
+.studio{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+.screen{background:#0B0F1A;border-radius:14px;overflow:hidden;position:relative}
+.screen canvas{display:block;width:100%;height:auto;aspect-ratio:16/9}
+.transport{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.transport input[type=range]{flex:1;min-width:160px;accent-color:var(--accent)}
+.time{font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--muted);min-width:110px;text-align:right}
+.strip{display:flex;gap:4px;margin-top:12px;height:34px}
+.strip button{border:0;border-radius:5px;background:var(--surface);border:1px solid var(--line);cursor:pointer;font-size:12px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding:0 6px;min-width:6px}
+.strip button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.side{display:flex;flex-direction:column;gap:16px}
+.side .panel{padding:16px}
+.side h3{margin-bottom:10px}
+.toggle{display:flex;align-items:center;gap:8px;font-size:15px;cursor:pointer}
+.toggle input{accent-color:var(--accent);width:18px;height:18px}
+.overlay{position:absolute;inset:0;background:rgba(11,15,26,.72);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:20px}
+.bar{width:min(380px,80%);height:8px;border-radius:4px;background:rgba(255,255,255,.2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--marker);width:0}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:600;z-index:50;max-width:90vw}
+.objlist{margin:8px 0 0;padding-left:20px}
+@media (max-width:900px){
+  .editor,.studio{grid-template-columns:1fr}
+  .scene-nav{position:static;max-height:none}
+  .form{grid-template-columns:1fr}
+  .beat{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+/* =====================================================================
+   CodeLesson AI — single-page studio
+   Modules (in order): config & registries · utils · storage · validation
+   · event DSL · AI generation · Python sandbox · timeline engine
+   · canvas renderers · player & recorder · views · samples · boot
+   ===================================================================== */
+
+/* ---------- config & registries ---------- */
+const W = 1280, H = 720;
+const PLATFORMS = {
+  python:   {id:'python',   label:'Python',             blurb:'Typed code, live output',      lang:'python',     file:'main.py',    color:'#3B7BD9', runs:true},
+  scratch:  {id:'scratch',  label:'Scratch',            blurb:'Block scripts and a stage',     lang:null,         file:'',           color:'#FFAB19', blockSet:'scratch'},
+  roblox:   {id:'roblox',   label:'Roblox / Luau',      blurb:'Scripts in a Studio-style view', lang:'luau',      file:'Script',     color:'#D9534F'},
+  minecraft:{id:'minecraft',label:'Minecraft Education',blurb:'MakeCode blocks and the Agent', lang:'javascript', file:'main.ts',    color:'#5BA33B', blockSet:'makecode'}
+};
+const AGES = ['6–8 years','9–11 years','12–14 years','15–17 years'];
+const DIFFICULTIES = ['Beginner','Intermediate','Advanced'];
+const DURATIONS = [5,8,10,15,20];
+const STYLES = ['Friendly','Story-based','Step-by-step','Interactive','Professional'];
+const SCENE_TYPES = ['intro','explanation','demonstration','code_walkthrough','output','common_mistakes','practice','challenge','recap','quiz'];
+const EVENT_TYPES = ['SHOW_TEXT','SHOW_CODE','TYPE_CODE','HIGHLIGHT_CODE','CLEAR_HIGHLIGHT','SHOW_BLOCK','HIGHLIGHT_BLOCK','SHOW_OUTPUT','MOVE_AGENT','TURN_AGENT','PLACE_BLOCK','DEMO','SHOW_CHALLENGE','SHOW_QUIZ','REVEAL_ANSWER'];
+const SEQ_EVENTS = new Set(['TYPE_CODE','MOVE_AGENT','TURN_AGENT','PLACE_BLOCK','DEMO','SHOW_OUTPUT']);
+const TEXT_STYLES = ['heading','bullet','callout','mistake','fix'];
+const AGENT_DIRS = ['forward','back','left','right','up','down'];
+const MC_BLOCKS = {stone:'#8C929C',planks:'#B98A4E',gold:'#E9C646',glass:'rgba(176,222,255,.55)',dirt:'#8B5A2B',wool:'#EDEDED',grass:'#6BAA3D',brick:'#A2493A'};
+const DEMO_ACTIONS = {
+  scratch:['move','turn','say','collect','set_var','change_var','go_to','hide','show'],
+  roblox:['touch','disappear','spawn','color','jump'],
+  minecraft:[], python:[]
+};
+
+/* Block registries. Add a block by adding one entry: shape is hat | stack | c | e (if/else) | cap.
+   Label tokens: [ARG] text/dropdown input, (ARG) number input, <ARG> boolean input. */
+const BLOCK_SETS = {
+  scratch:{
+    colors:{events:'#FFBF00',motion:'#4C97FF',looks:'#9966FF',sound:'#CF63CF',control:'#FFAB19',sensing:'#5CB1D6',operators:'#59C059',variables:'#FF8C1A',custom:'#FF6680'},
+    blocks:{
+      when_flag_clicked:{cat:'events',shape:'hat',label:'when ⚑ clicked'},
+      when_key_pressed:{cat:'events',shape:'hat',label:'when [KEY] key pressed',def:{KEY:'space'}},
+      when_sprite_clicked:{cat:'events',shape:'hat',label:'when this sprite clicked'},
+      when_receive:{cat:'events',shape:'hat',label:'when I receive [MESSAGE]',def:{MESSAGE:'message1'}},
+      broadcast:{cat:'events',shape:'stack',label:'broadcast [MESSAGE]',def:{MESSAGE:'message1'}},
+      move_steps:{cat:'motion',shape:'stack',label:'move (STEPS) steps',def:{STEPS:'10'}},
+      turn_right:{cat:'motion',shape:'stack',label:'turn ↻ (DEGREES) degrees',def:{DEGREES:'15'}},
+      turn_left:{cat:'motion',shape:'stack',label:'turn ↺ (DEGREES) degrees',def:{DEGREES:'15'}},
+      go_to_xy:{cat:'motion',shape:'stack',label:'go to x: (X) y: (Y)',def:{X:'0',Y:'0'}},
+      glide_to_xy:{cat:'motion',shape:'stack',label:'glide (SECS) secs to x: (X) y: (Y)',def:{SECS:'1',X:'0',Y:'0'}},
+      point_direction:{cat:'motion',shape:'stack',label:'point in direction (DIRECTION)',def:{DIRECTION:'90'}},
+      bounce:{cat:'motion',shape:'stack',label:'if on edge, bounce'},
+      say:{cat:'looks',shape:'stack',label:'say [MESSAGE]',def:{MESSAGE:'Hello!'}},
+      say_for_secs:{cat:'looks',shape:'stack',label:'say [MESSAGE] for (SECS) seconds',def:{MESSAGE:'Hello!',SECS:'2'}},
+      think:{cat:'looks',shape:'stack',label:'think [MESSAGE]',def:{MESSAGE:'Hmm...'}},
+      next_costume:{cat:'looks',shape:'stack',label:'next costume'},
+      show:{cat:'looks',shape:'stack',label:'show'},
+      hide:{cat:'looks',shape:'stack',label:'hide'},
+      change_size:{cat:'looks',shape:'stack',label:'change size by (CHANGE)',def:{CHANGE:'10'}},
+      play_sound:{cat:'sound',shape:'stack',label:'start sound [SOUND]',def:{SOUND:'pop'}},
+      wait:{cat:'control',shape:'stack',label:'wait (SECS) seconds',def:{SECS:'1'}},
+      repeat:{cat:'control',shape:'c',label:'repeat (TIMES)',def:{TIMES:'10'}},
+      forever:{cat:'control',shape:'c',cap:true,label:'forever'},
+      if:{cat:'control',shape:'c',label:'if <CONDITION> then',def:{CONDITION:''}},
+      if_else:{cat:'control',shape:'e',label:'if <CONDITION> then',def:{CONDITION:''}},
+      repeat_until:{cat:'control',shape:'c',label:'repeat until <CONDITION>',def:{CONDITION:''}},
+      wait_until:{cat:'control',shape:'stack',label:'wait until <CONDITION>',def:{CONDITION:''}},
+      stop_all:{cat:'control',shape:'cap',label:'stop [OPTION]',def:{OPTION:'all'}},
+      set_variable:{cat:'variables',shape:'stack',label:'set [VAR] to (VALUE)',def:{VAR:'score',VALUE:'0'}},
+      change_variable:{cat:'variables',shape:'stack',label:'change [VAR] by (VALUE)',def:{VAR:'score',VALUE:'1'}},
+      ask_and_wait:{cat:'sensing',shape:'stack',label:'ask [QUESTION] and wait',def:{QUESTION:"What's your name?"}}
+    }
+  },
+  makecode:{
+    colors:{player:'#0D7CC3',agent:'#D2481B',loops:'#1C9C3C',logic:'#5865B0',variables:'#C8264F',blocks:'#6D9C2E',positions:'#4E9C8C',custom:'#7A5CC2'},
+    blocks:{
+      on_start:{cat:'loops',shape:'hat',label:'on start'},
+      on_chat:{cat:'player',shape:'hat',label:'on chat command [COMMAND]',def:{COMMAND:'run'}},
+      player_say:{cat:'player',shape:'stack',label:'say [MESSAGE]',def:{MESSAGE:'Hi!'}},
+      agent_move:{cat:'agent',shape:'stack',label:'agent move [DIRECTION] by (BLOCKS)',def:{DIRECTION:'forward',BLOCKS:'1'}},
+      agent_turn:{cat:'agent',shape:'stack',label:'agent turn [DIRECTION]',def:{DIRECTION:'left'}},
+      agent_place:{cat:'agent',shape:'stack',label:'agent place [DIRECTION]',def:{DIRECTION:'down'}},
+      agent_destroy:{cat:'agent',shape:'stack',label:'agent destroy [DIRECTION]',def:{DIRECTION:'forward'}},
+      agent_till:{cat:'agent',shape:'stack',label:'agent till [DIRECTION]',def:{DIRECTION:'forward'}},
+      agent_set_item:{cat:'agent',shape:'stack',label:'agent set block or item [ITEM] count (COUNT) in slot (SLOT)',def:{ITEM:'stone',COUNT:'64',SLOT:'1'}},
+      agent_place_on_move:{cat:'agent',shape:'stack',label:'agent place on move [ON]',def:{ON:'true'}},
+      agent_teleport:{cat:'agent',shape:'stack',label:'agent teleport to player'},
+      repeat:{cat:'loops',shape:'c',label:'repeat (TIMES) times',def:{TIMES:'4'}},
+      while:{cat:'loops',shape:'c',label:'while <CONDITION>',def:{CONDITION:'true'}},
+      for_range:{cat:'loops',shape:'c',label:'for (INDEX) from 0 to (END)',def:{INDEX:'index',END:'4'}},
+      pause:{cat:'loops',shape:'stack',label:'pause (MS) ms',def:{MS:'100'}},
+      if:{cat:'logic',shape:'c',label:'if <CONDITION> then',def:{CONDITION:'true'}},
+      if_else:{cat:'logic',shape:'e',label:'if <CONDITION> then',def:{CONDITION:'true'}},
+      set_variable:{cat:'variables',shape:'stack',label:'set [VAR] to (VALUE)',def:{VAR:'count',VALUE:'0'}},
+      change_variable:{cat:'variables',shape:'stack',label:'change [VAR] by (VALUE)',def:{VAR:'count',VALUE:'1'}},
+      place_block:{cat:'blocks',shape:'stack',label:'place [BLOCK] at (POSITION)',def:{BLOCK:'stone',POSITION:'~0 ~0 ~0'}},
+      fill_blocks:{cat:'blocks',shape:'stack',label:'fill with [BLOCK] from (FROM) to (TO)',def:{BLOCK:'stone',FROM:'~0 ~0 ~0',TO:'~3 ~0 ~3'}}
+    }
+  }
+};
+
+/* ---------- utils ---------- */
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const uid = (p='l') => p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const words = s => (String(s||'').trim().match(/\S+/g) || []).length;
+const fmtTime = s => { s = Math.max(0, s); const m = Math.floor(s/60), r = Math.floor(s%60); return m + ':' + String(r).padStart(2,'0'); };
+const deepClone = o => JSON.parse(JSON.stringify(o));
+const ease = p => p<.5 ? 2*p*p : 1 - Math.pow(-2*p+2, 2)/2;
+function debounce(fn, ms){ let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+function toast(msg){ const el = document.createElement('div'); el.className='toast'; el.setAttribute('role','status'); el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(), 3200); }
+function codeLines(code){ return String(code||'').replace(/\t/g,'    ').replace(/\r/g,'').split('\n'); }
+
+/* ---------- server API & storage ---------- */
+const Server = {config:null};
+async function api(method, url, body, opts={}){
+  let res;
+  try {
+    res = await fetch(url, {method, credentials:'same-origin', signal:opts.signal,
+      headers: body !== undefined ? {'content-type':'application/json'} : {},
+      body: body !== undefined ? JSON.stringify(body) : undefined});
+  } catch (e) {
+    if (e && e.name === 'AbortError') throw {code:'cancelled', message:'Cancelled.'};
+    throw Object.assign(new Error('Could not reach the server. Check your connection.'), {code:'network'});
+  }
+  let data = null; try { data = await res.json(); } catch {}
+  if (!res.ok){
+    const e = new Error((data && data.message) || `Request failed (${res.status})`);
+    e.code = (data && data.code) || 'http_' + res.status; e.text = data && data.text; e.status = res.status;
+    if (res.status === 401 && !opts.noAuthRedirect) onUnauthorized();
+    throw e;
+  }
+  return data;
+}
+function onUnauthorized(){ if (App.view !== 'auth'){ App.profile = null; go('auth', {authMode:'login'}); toast('Your session ended. Log in again.'); } }
+const Store = {
+  async loadAll(){ const r = await api('GET', '/api/lessons'); const lessons = {}; for (const l of r.lessons) lessons[l.id] = l; return {lessons}; },
+  async saveLesson(lesson){ try { await api('PUT', '/api/lessons/' + encodeURIComponent(lesson.id), {lesson:stripRuntime(lesson)}); } catch (e) { if (e.status !== 401) toast('Could not save: ' + e.message); } },
+  async deleteLesson(id){ await api('DELETE', '/api/lessons/' + encodeURIComponent(id)); }
+};
+function stripRuntime(lesson){
+  return JSON.parse(JSON.stringify(lesson, (k, v) => k.startsWith('_') ? undefined : v));
+}
+
+/* ---------- validation & repair ---------- */
+function blockRegistry(platform){ const k = PLATFORMS[platform]?.blockSet; return k ? BLOCK_SETS[k] : null; }
+
+function normalizeBlocks(list, platform, ctx){
+  const reg = blockRegistry(platform);
+  const out = [];
+  for (const raw of (Array.isArray(list) ? list : [])){
+    if (!raw || typeof raw !== 'object') continue;
+    const b = {id:String(raw.id || ''), name:String(raw.name || 'custom'), args:{}, children:[], else:[]};
+    if (!b.id || ctx.ids.has(b.id)){ b.id = 'b' + (++ctx.n); while (ctx.ids.has(b.id)) b.id = 'b' + (++ctx.n); }
+    ctx.ids.add(b.id);
+    if (raw.args && typeof raw.args === 'object') for (const [k, v] of Object.entries(raw.args)) b.args[String(k).toUpperCase()] = String(v);
+    if (!reg || !reg.blocks[b.name]){
+      if (b.name !== 'custom') ctx.warn.push(`Block "${b.name}" isn't in the ${platform} block set — shown with its label as a custom block.`);
+      b.label = String(raw.label || raw.text || b.name.replace(/_/g,' '));
+      b.category = String(raw.category || 'custom');
+      b.shape = ['hat','stack','c','e','cap'].includes(raw.shape) ? raw.shape : ((raw.children||[]).length ? 'c' : 'stack');
+      b.name = 'custom';
+    }
+    b.children = normalizeBlocks(raw.children, platform, ctx);
+    b.else = normalizeBlocks(raw.else, platform, ctx);
+    out.push(b);
+  }
+  return out;
+}
+function allBlockIds(blocks, acc=[]){ for (const b of blocks){ acc.push(b.id); allBlockIds(b.children, acc); allBlockIds(b.else, acc); } return acc; }
+function parseLineList(v, n){
+  let arr = Array.isArray(v) ? v : (v == null ? [] : [v]);
+  const out = [];
+  for (const x of arr){
+    if (typeof x === 'string' && /^\d+\s*-\s*\d+$/.test(x)){ const [a,b] = x.split('-').map(Number); for (let i=a;i<=b;i++) out.push(i); }
+    else { const k = parseInt(x, 10); if (!isNaN(k)) out.push(k); }
+  }
+  return [...new Set(out)].filter(k => k >= 1 && k <= n).sort((a,b)=>a-b);
+}
+
+function normalizeEvent(ev, scene, platform, warn, nLines, blockIds){
+  if (!ev || typeof ev !== 'object') return null;
+  const type = String(ev.type || '').toUpperCase().trim();
+  if (!EVENT_TYPES.includes(type)){ warn.push(`Removed unknown event "${ev.type}".`); return null; }
+  const e = {type};
+  if (ev.at != null && !isNaN(+ev.at)) e.at = clamp(+ev.at, 0, 1);
+  switch (type){
+    case 'SHOW_TEXT': e.text = String(ev.text || '').trim(); if (!e.text) return null; e.style = TEXT_STYLES.includes(ev.style) ? ev.style : 'bullet'; break;
+    case 'SHOW_CODE': case 'TYPE_CODE': case 'HIGHLIGHT_CODE': {
+      if (!nLines){ warn.push(`${type} needs code in this scene — removed.`); return null; }
+      const req = ev.lines ?? ev.line;
+      e.lines = parseLineList(req, nLines);
+      if (type !== 'SHOW_CODE' && !e.lines.length){
+        if (type === 'TYPE_CODE' && req == null) e.lines = Array.from({length:nLines}, (_, i) => i+1);
+        else { warn.push(`${type} pointed at lines that don't exist — removed.`); return null; }
+      }
+      if (type === 'SHOW_CODE' && !e.lines.length) delete e.lines;
+      if (type === 'HIGHLIGHT_CODE' && ev.match) e.match = String(ev.match);
+      break;
+    }
+    case 'SHOW_BLOCK': case 'HIGHLIGHT_BLOCK':
+      e.block_id = String(ev.block_id || ev.id || '');
+      if (!blockIds.has(e.block_id)){ warn.push(`${type} refers to missing block "${e.block_id}" — removed.`); return null; }
+      break;
+    case 'SHOW_OUTPUT': break;
+    case 'MOVE_AGENT': e.direction = AGENT_DIRS.includes(String(ev.direction).toLowerCase()) ? String(ev.direction).toLowerCase() : 'forward'; e.steps = clamp(parseInt(ev.steps, 10) || 1, 1, 12); break;
+    case 'TURN_AGENT': e.direction = String(ev.direction).toLowerCase() === 'right' ? 'right' : 'left'; break;
+    case 'PLACE_BLOCK': e.block = MC_BLOCKS[String(ev.block).toLowerCase()] ? String(ev.block).toLowerCase() : 'stone'; e.direction = String(ev.direction).toLowerCase() === 'forward' ? 'forward' : 'down'; break;
+    case 'DEMO':
+      e.action = String(ev.action || '').toLowerCase();
+      if (!(DEMO_ACTIONS[platform] || []).includes(e.action)){ warn.push(`Demo action "${ev.action}" isn't available for ${PLATFORMS[platform].label} — removed.`); return null; }
+      if (ev.value != null) e.value = String(ev.value);
+      break;
+    case 'SHOW_CHALLENGE': e.text = String(ev.text || '').trim(); if (!e.text) return null; break;
+    case 'SHOW_QUIZ': case 'REVEAL_ANSWER': e.index = Math.max(1, parseInt(ev.index, 10) || 1); break;
+    case 'CLEAR_HIGHLIGHT': break;
+  }
+  return e;
+}
+
+/* Validates one scene in place. Returns {errors, warnings}. Errors are fatal (AI repair needed). */
+function validateScene(scene, platform, quizLen=0){
+  const warn = [], errors = [];
+  if (!scene || typeof scene !== 'object') return {errors:['Scene is not an object.'], warnings:[]};
+  scene.scene_id = String(scene.scene_id || uid('scene'));
+  scene.scene_type = SCENE_TYPES.includes(scene.scene_type) ? scene.scene_type : 'explanation';
+  scene.title = String(scene.title || 'Untitled scene');
+  scene.visual_description = String(scene.visual_description || '');
+  scene.code = typeof scene.code === 'string' ? scene.code.replace(/\t/g,'    ').replace(/\r/g,'').replace(/\n+$/,'') : '';
+  scene.expected_output = typeof scene.expected_output === 'string' ? scene.expected_output.replace(/\r/g,'') : '';
+  const ctx = {ids:new Set(), n:0, warn};
+  scene.blocks = normalizeBlocks(scene.blocks, platform, ctx);
+  const nLines = scene.code ? codeLines(scene.code).length : 0;
+  const blockIds = new Set(allBlockIds(scene.blocks));
+  if (!Array.isArray(scene.beats)) scene.beats = [];
+  scene.beats = scene.beats.filter(b => b && typeof b === 'object').map(b => ({
+    narration: String(b.narration || '').trim(),
+    events: (Array.isArray(b.events) ? b.events : []).map(e => normalizeEvent(e, scene, platform, warn, nLines, blockIds)).filter(Boolean)
+  })).filter(b => b.narration || b.events.length);
+  if (!scene.beats.some(b => b.narration)) errors.push(`Scene "${scene.title}" has no narration.`);
+
+  // Make sure anything highlighted is on screen first; make sure code/blocks appear at all.
+  const shownLines = new Set(), shownBlocks = new Set();
+  const parents = {}; (function walk(list, p){ for (const b of list){ parents[b.id] = p; walk(b.children, b.id); walk(b.else, b.id); } })(scene.blocks, null);
+  for (const b of scene.beats){
+    const fixed = [];
+    for (const e of b.events){
+      if (e.type === 'SHOW_CODE'){ (e.lines || Array.from({length:nLines},(_, i)=>i+1)).forEach(l => shownLines.add(l)); }
+      if (e.type === 'TYPE_CODE') e.lines.forEach(l => shownLines.add(l));
+      if (e.type === 'HIGHLIGHT_CODE'){
+        const missing = e.lines.filter(l => !shownLines.has(l));
+        if (missing.length){ fixed.push({type:'SHOW_CODE', lines:missing}); missing.forEach(l => shownLines.add(l)); warn.push(`Highlighted line ${missing.join(', ')} before it was shown — it now appears first.`); }
+        if (e.match){ const ok = e.lines.some(l => codeLines(scene.code)[l-1].includes(e.match)); if (!ok){ warn.push(`"${e.match}" isn't on line ${e.lines.join(', ')} — highlighting the whole line instead.`); delete e.match; } }
+      }
+      if (e.type === 'SHOW_BLOCK' || e.type === 'HIGHLIGHT_BLOCK'){
+        const chain = []; let p = parents[e.block_id];
+        while (p){ if (!shownBlocks.has(p)) chain.unshift(p); p = parents[p]; }
+        for (const id of chain){ fixed.push({type:'SHOW_BLOCK', block_id:id}); shownBlocks.add(id); }
+        if (e.type === 'HIGHLIGHT_BLOCK' && !shownBlocks.has(e.block_id)){ fixed.push({type:'SHOW_BLOCK', block_id:e.block_id}); }
+        shownBlocks.add(e.block_id);
+      }
+      if (e.type === 'SHOW_OUTPUT' && !scene.code && !scene.expected_output){ warn.push('SHOW_OUTPUT has no code or expected output — removed.'); continue; }
+      if ((e.type === 'SHOW_QUIZ' || e.type === 'REVEAL_ANSWER') && quizLen && e.index > quizLen){ warn.push(`Quiz question ${e.index} doesn't exist — removed.`); continue; }
+      fixed.push(e);
+    }
+    b.events = fixed;
+  }
+  if (nLines && !shownLines.size && scene.beats.length){ scene.beats[0].events.unshift({type:'SHOW_CODE'}); warn.push('Code was never shown — it now appears at the start of the scene.'); }
+  if (blockIds.size && !shownBlocks.size && scene.beats.length){
+    scene.beats[0].events.unshift(...allBlockIds(scene.blocks).map(id => ({type:'SHOW_BLOCK', block_id:id})));
+    warn.push('Blocks were never shown — they now appear at the start of the scene.');
+  }
+  return {errors, warnings:[...new Set(warn)]};
+}
+
+function validateLesson(lesson){
+  const errors = [], warnings = [];
+  if (!lesson || typeof lesson !== 'object') return {errors:['Lesson is not an object.'], warnings};
+  lesson.platform = PLATFORMS[lesson.platform] ? lesson.platform : 'python';
+  lesson.lesson_title = String(lesson.lesson_title || '').trim() || 'Untitled lesson';
+  for (const k of ['learning_objectives','prerequisites']) lesson[k] = (Array.isArray(lesson[k]) ? lesson[k] : []).map(String).filter(Boolean);
+  lesson.common_mistakes = (Array.isArray(lesson.common_mistakes) ? lesson.common_mistakes : []).map(m => typeof m === 'string' ? {mistake:m, fix:''} : {mistake:String(m?.mistake||''), fix:String(m?.fix||'')}).filter(m => m.mistake);
+  for (const k of ['practice_activity','challenge','recap']) lesson[k] = String(lesson[k] || '');
+  lesson.quiz = (Array.isArray(lesson.quiz) ? lesson.quiz : []).map(q => {
+    const options = (Array.isArray(q?.options) ? q.options : []).map(String).slice(0, 4);
+    while (options.length < 2) options.push('—');
+    return {question:String(q?.question||''), options, answer_index:clamp(parseInt(q?.answer_index,10)||0, 0, options.length-1), explanation:String(q?.explanation||'')};
+  }).filter(q => q.question);
+  if (!Array.isArray(lesson.scenes) || !lesson.scenes.length) errors.push('Lesson has no scenes.');
+  else for (const s of lesson.scenes){ const r = validateScene(s, lesson.platform, lesson.quiz.length); errors.push(...r.errors); warnings.push(...r.warnings); }
+  return {errors, warnings};
+}
+
+/* ---------- event DSL (how teachers edit sync events) ----------
+   One event per line, e.g.  TYPE_CODE 1-2   HIGHLIGHT_CODE 2 "range(5)"   MOVE_AGENT forward 3 @0.5 */
+function q(s){ return '"' + String(s).replace(/"/g, '\\"') + '"'; }
+function lineSpec(lines){
+  if (!lines || !lines.length) return '';
+  const parts = []; let a = lines[0], b = lines[0];
+  for (let i = 1; i <= lines.length; i++){
+    if (lines[i] === b + 1) b = lines[i];
+    else { parts.push(a === b ? String(a) : a + '-' + b); a = b = lines[i]; }
+  }
+  return parts.join(',');
+}
+function eventToDSL(e){
+  let s = e.type;
+  switch (e.type){
+    case 'SHOW_TEXT': s += (e.style && e.style !== 'bullet' ? ' ' + e.style : '') + ' ' + q(e.text); break;
+    case 'SHOW_CODE': case 'TYPE_CODE': if (e.lines) s += ' ' + lineSpec(e.lines); break;
+    case 'HIGHLIGHT_CODE': s += ' ' + lineSpec(e.lines) + (e.match ? ' ' + q(e.match) : ''); break;
+    case 'SHOW_BLOCK': case 'HIGHLIGHT_BLOCK': s += ' ' + e.block_id; break;
+    case 'MOVE_AGENT': s += ' ' + e.direction + ' ' + e.steps; break;
+    case 'TURN_AGENT': s += ' ' + e.direction; break;
+    case 'PLACE_BLOCK': s += ' ' + e.block + ' ' + e.direction; break;
+    case 'DEMO': s += ' ' + e.action + (e.value != null ? ' ' + q(e.value) : ''); break;
+    case 'SHOW_CHALLENGE': s += ' ' + q(e.text); break;
+    case 'SHOW_QUIZ': case 'REVEAL_ANSWER': s += ' ' + e.index; break;
+  }
+  if (e.at != null) s += ' @' + (+e.at).toFixed(2).replace(/0+$/,'').replace(/\.$/,'');
+  return s;
+}
+function tokenizeDSL(line){
+  const out = []; const re = /"((?:[^"\\]|\\.)*)"|(\S+)/g; let m;
+  while ((m = re.exec(line))) out.push(m[1] != null ? {s:m[1].replace(/\\"/g,'"'), quoted:true} : {s:m[2], quoted:false});
+  return out;
+}
+function parseDSL(text){
+  const events = [], errors = [];
+  String(text||'').split('\n').forEach((raw, i) => {
+    const line = raw.trim(); if (!line || line.startsWith('#')) return;
+    const toks = tokenizeDSL(line);
+    let at; const last = toks[toks.length-1];
+    if (last && !last.quoted && /^@[\d.]+$/.test(last.s)){ at = parseFloat(last.s.slice(1)); toks.pop(); }
+    const type = toks.shift().s.toUpperCase();
+    const rest = toks;
+    if (!EVENT_TYPES.includes(type)){ errors.push(`Line ${i+1}: "${type}" isn't an event type.`); return; }
+    const e = {type};
+    const str = () => (rest.find(t => t.quoted) || {}).s;
+    const bare = () => rest.filter(t => !t.quoted).map(t => t.s);
+    switch (type){
+      case 'SHOW_TEXT': { const b = bare(); e.style = TEXT_STYLES.includes(b[0]) ? b[0] : 'bullet'; e.text = str(); if (!e.text){ errors.push(`Line ${i+1}: put the text in quotes.`); return; } break; }
+      case 'SHOW_CODE': case 'TYPE_CODE': case 'HIGHLIGHT_CODE': {
+        const b = bare(); if (b[0]) e.lines = b[0].split(',').flatMap(p => p.includes('-') ? [p] : [p]);
+        if (type === 'HIGHLIGHT_CODE'){ if (!b[0]){ errors.push(`Line ${i+1}: say which line to highlight.`); return; } const m = str(); if (m) e.match = m; }
+        break; }
+      case 'SHOW_BLOCK': case 'HIGHLIGHT_BLOCK': e.block_id = bare()[0]; if (!e.block_id){ errors.push(`Line ${i+1}: add a block id like b1.`); return; } break;
+      case 'MOVE_AGENT': { const b = bare(); e.direction = b[0]; e.steps = b[1]; break; }
+      case 'TURN_AGENT': e.direction = bare()[0]; break;
+      case 'PLACE_BLOCK': { const b = bare(); e.block = b[0]; e.direction = b[1]; break; }
+      case 'DEMO': { const b = bare(); e.action = b[0]; const v = str() ?? b[1]; if (v != null) e.value = v; break; }
+      case 'SHOW_CHALLENGE': e.text = str(); if (!e.text){ errors.push(`Line ${i+1}: put the challenge in quotes.`); return; } break;
+      case 'SHOW_QUIZ': case 'REVEAL_ANSWER': e.index = bare()[0]; break;
+    }
+    if (at != null && !isNaN(at)) e.at = at;
+    events.push(e);
+  });
+  return {events, errors};
+}
+
+/* ---------- AI generation ---------- */
+const sampleShim = {
+  json: async (prompt, opts={}) => (await api('POST', '/api/ai/json', {prompt}, {signal:opts.signal})).data
+};
+function aiKeyName(){ return Server.config && Server.config.aiProvider === 'anthropic' ? 'ANTHROPIC_API_KEY' : 'GEMINI_API_KEY'; }
+function getSample(){ return Promise.resolve(Server.config && Server.config.ai ? sampleShim : null); }
+function aiErrorCopy(e){
+  const c = e && e.code;
+  if (c === 'rate_limited') return 'Too many AI requests right now. Wait a minute, then try again.';
+  if (c === 'quota') return e.message;
+  if (c === 'cancelled') return 'Generation stopped.';
+  if (c === 'invalid_json') return 'The AI returned a lesson that could not be read, even after a repair attempt. Try again, or shorten the lesson.';
+  if (c === 'unavailable' || c === 'ai_not_configured') return `Lesson generation is not set up on this server. Add ${aiKeyName()} to the .env file and restart the server. Sample lessons still work.`;
+  if (c === 'ai_bad_key') return `The server\u2019s AI key was rejected. Check ${aiKeyName()} in .env.`;
+  if (c === 'rate_limited' && Server.config && Server.config.aiProvider === 'gemini') return 'Gemini\u2019s free tier is busy or its per-minute limit was reached. Wait a minute, then try again.';
+  if (c === 'network') return e.message;
+  return (e && e.message) ? 'AI request failed: ' + e.message : 'AI request failed. Try again.';
+}
+
+function platformGuide(platform){
+  const reg = blockRegistry(platform);
+  const blockList = reg ? Object.entries(reg.blocks).map(([k, v]) => `  ${k}: "${v.label}" (${v.shape}${v.cap?', cap':''})`).join('\n') : '';
+  switch (platform){
+    case 'python': return `PLATFORM: Python 3.
+- "code" must be valid, complete Python 3 using only built-ins (math/random/string allowed; seed random). No input(), no files, no network, no infinite loops.
+- Keep each scene's code to at most 14 lines, each line at most 46 characters, so it is readable in the video.
+- "expected_output" must be the exact text the code prints.
+- Use TYPE_CODE to type lines as the narration introduces them, HIGHLIGHT_CODE (with "match" for a keyword such as "for" or "range(5)") while explaining, then SHOW_OUTPUT once all lines are on screen.
+- "blocks" must be [] (empty).`;
+    case 'roblox': return `PLATFORM: Roblox Studio, Luau.
+- "code" is a Luau Script (usually inside a Part, e.g. a Coin). Use real Roblox APIs (script.Parent, Touched:Connect, game.Players:GetPlayerFromCharacter, task.wait, Instance.new, BrickColor.new). At most 14 lines, 46 characters each.
+- "expected_output" is what appears in Studio's Output window when the game runs (print output).
+- DEMO actions animate the Studio-style viewport: "touch" (the player walks into the part), "disappear" (part vanishes), "spawn" (part appears), "color" with value like "Bright red", "jump".
+- "blocks" must be [].`;
+    case 'scratch': return `PLATFORM: Scratch 3 (block-based). There is no text code: "code" must be "".
+- "blocks" is a list of scripts. Each block: {"id":"b1","name":"<registry name>","args":{"ARG":"value"},"children":[...],"else":[...]} — children only for c/e blocks.
+- Block registry (use these names and ARG keys exactly):
+${blockList}
+- Boolean inputs <CONDITION> take text such as "touching Coin?" or "key space pressed?".
+- Use SHOW_BLOCK to build the script in order (hat first), HIGHLIGHT_BLOCK when explaining a block.
+- DEMO actions animate the stage: "move" (value: steps), "turn" (degrees), "say" (text), "collect" (sprite touches the coin), "set_var" (value "score=0"), "change_var" (value "score+1"), "go_to" ("x,y"), "hide", "show".
+- "expected_output" may describe what the project does in one short sentence.`;
+    case 'minecraft': return `PLATFORM: Minecraft Education Edition with Microsoft MakeCode (blocks + MakeCode JavaScript). This is about coding the Agent and player in Minecraft Education, not general game development.
+- "blocks" is a list of MakeCode scripts. Each block: {"id":"b1","name":"<registry name>","args":{"ARG":"value"},"children":[...],"else":[...]}.
+- Block registry (use these names and ARG keys exactly):
+${blockList}
+- "code" is the equivalent MakeCode JavaScript, e.g.
+  player.onChat("tower", function () {
+      for (let i = 0; i < 4; i++) {
+          agent.place(DOWN)
+          agent.move(UP, 1)
+      }
+  })
+  Valid APIs: player.onChat, player.say, agent.move(FORWARD|BACK|LEFT|RIGHT|UP|DOWN, n), agent.turn(LEFT_TURN|RIGHT_TURN), agent.place(FORWARD|DOWN), agent.destroy(FORWARD), agent.setItem(STONE, 64, 1), agent.setAssist(PLACE_ON_MOVE, true), agent.teleportToPlayer(), loops.pause(ms). At most 14 lines.
+- After showing the blocks, demonstrate what the Agent does in the world with MOVE_AGENT / TURN_AGENT / PLACE_BLOCK events that match the program exactly (a loop that repeats 4 times = 4 sets of events).
+- The world is a flat grid; the Agent starts facing east with room to move about 6 blocks forward.`;
+  }
+  return '';
+}
+
+const EVENT_DOC = `EVENTS (the video engine syncs these to narration; use only these):
+{"type":"SHOW_TEXT","text":"...","style":"heading|bullet|callout|mistake|fix"}  on-screen text. Scenes without code/blocks become a slide: one heading then bullets. In code scenes it shows one short callout.
+{"type":"TYPE_CODE","lines":[1,2]}  animate typing those lines of this scene's "code" (1-based line numbers).
+{"type":"SHOW_CODE","lines":[1,2,3]}  show lines instantly (omit "lines" for all).
+{"type":"HIGHLIGHT_CODE","lines":[1],"match":"range(5)"}  highlight a line; optional "match" = exact substring on that line.
+{"type":"CLEAR_HIGHLIGHT"}
+{"type":"SHOW_OUTPUT"}  run the code and reveal its output (only after every line is on screen).
+{"type":"SHOW_BLOCK","block_id":"b1"}   {"type":"HIGHLIGHT_BLOCK","block_id":"b1"}
+{"type":"MOVE_AGENT","direction":"forward|back|left|right|up|down","steps":3}
+{"type":"TURN_AGENT","direction":"left|right"}
+{"type":"PLACE_BLOCK","block":"stone|planks|gold|glass|dirt|wool|grass|brick","direction":"down|forward"}
+{"type":"DEMO","action":"...","value":"..."}  platform demo animation (see platform notes).
+{"type":"SHOW_CHALLENGE","text":"..."}
+{"type":"SHOW_QUIZ","index":1}   {"type":"REVEAL_ANSWER","index":1}  (lesson quiz question number, 1-based)
+Optional "at" (0..1) on any event = when within the beat's narration it fires. Without "at", a beat's events run one after another from the start of the beat.
+SYNC RULE: put each event in the beat whose narration talks about it. If a beat says "first we create a variable called score", that same beat holds the TYPE_CODE for that line.`;
+
+function outlinePrompt(f){
+  const secs = f.duration * 60;
+  const nScenes = clamp(Math.round(f.duration * 0.9) + 3, 6, 16);
+  return `You are a senior coding teacher and instructional designer. Plan a narrated coding lesson VIDEO.
+
+${platformGuide(f.platform)}
+
+AUDIENCE: ${f.age}. DIFFICULTY: ${f.difficulty}. TEACHING STYLE: ${f.style}.
+TOPIC: ${f.topic}
+LEARNING OBJECTIVE: ${f.objective || '(derive a clear one from the topic)'}
+TARGET LENGTH: ${f.duration} minutes (about ${secs} seconds of narration).
+${f.extra ? 'TEACHER NOTES: ' + f.extra : ''}
+
+Reply with only this JSON object:
+{
+ "lesson_title": "...",
+ "learning_objectives": ["3 or 4 measurable objectives"],
+ "prerequisites": ["..."],
+ "final_program": "the complete program/script the lesson builds (code text; for Scratch describe the scripts in words)",
+ "common_mistakes": [{"mistake":"...","fix":"..."}],
+ "practice_activity": "...",
+ "challenge": "a concrete student challenge that changes the program",
+ "recap": "2-3 sentence recap",
+ "quiz": [{"question":"...","options":["A","B","C","D"],"answer_index":0,"explanation":"..."}],
+ "scenes": [{"scene_id":"scene_1","scene_type":"intro","title":"...","goal":"what this scene teaches and shows on screen","duration_seconds":30}]
+}
+Rules: about ${nScenes} scenes whose duration_seconds add up to about ${secs}. Scene types (in a sensible order) must include intro, explanation, several demonstration or code_walkthrough scenes, output, common_mistakes, practice, challenge, recap, quiz. Allowed scene_type values: ${SCENE_TYPES.join(', ')}. 3 common mistakes, 4 quiz questions. Language and examples must suit ${f.age}.`;
+}
+
+function scenePrompt(f, outline, sc, idx, instruction){
+  const wordsTarget = Math.round((sc.duration_seconds || 30) * 2.5);
+  const list = outline.scenes.map((s, i) => `${i+1}. [${s.scene_type}] ${s.title} — ${s.goal || ''}`).join('\n');
+  let extra = '';
+  if (sc.scene_type === 'quiz') extra = 'QUIZ (use SHOW_QUIZ / REVEAL_ANSWER with these question numbers; read each question, pause, reveal):\n' + outline.quiz.map((qq, i) => `${i+1}. ${qq.question} | options: ${qq.options.join(' / ')} | answer: ${qq.options[qq.answer_index]}`).join('\n');
+  if (sc.scene_type === 'challenge') extra = 'CHALLENGE TEXT (show with SHOW_CHALLENGE): ' + outline.challenge;
+  if (sc.scene_type === 'common_mistakes') extra = 'COMMON MISTAKES: ' + outline.common_mistakes.map(m => m.mistake + ' → ' + m.fix).join(' | ') + '\nYou may show a short buggy snippet as code and then explain the fix.';
+  if (sc.scene_type === 'practice') extra = 'PRACTICE ACTIVITY: ' + outline.practice_activity;
+  if (sc.scene_type === 'recap') extra = 'RECAP: ' + outline.recap;
+  return `You are writing ONE scene of a narrated coding lesson video. The narration is read aloud by a voice; everything on screen is driven by timed events.
+
+LESSON: "${outline.lesson_title}" for ${f.age}, ${f.difficulty}, style: ${f.style}.
+${platformGuide(f.platform)}
+
+FINAL PROGRAM THE LESSON BUILDS:
+${outline.final_program || '(not specified)'}
+
+ALL SCENES:
+${list}
+
+WRITE SCENE ${idx+1}: [${sc.scene_type}] "${sc.title}" — ${sc.goal || ''}
+Narration length: about ${wordsTarget} words in total, split into beats of 1–2 sentences (8–30 words each). Speak directly to the student in a ${f.style.toLowerCase()} tone.
+${extra}
+${instruction ? 'TEACHER INSTRUCTION FOR THIS SCENE: ' + instruction : ''}
+
+${EVENT_DOC}
+
+Scenes without code (intro, explanation, recap) should use SHOW_TEXT: one heading then 2–4 short bullets, each appearing in the beat that mentions it.
+
+Reply with only this JSON object:
+{"scene_id":"${sc.scene_id}","scene_type":"${sc.scene_type}","title":"${String(sc.title).replace(/"/g,"'")}","visual_description":"one sentence describing the screen","code":"","blocks":[],"expected_output":"","beats":[{"narration":"...","events":[...]}]}`;
+}
+
+function validateOutline(o){
+  const e = [];
+  if (!o || typeof o !== 'object') return ['Reply was not a JSON object.'];
+  if (!o.lesson_title) e.push('Missing lesson_title.');
+  if (!Array.isArray(o.scenes) || o.scenes.length < 3) e.push('scenes must list at least 3 scenes.');
+  else o.scenes.forEach((s, i) => { if (!s.title) e.push(`Scene ${i+1} needs a title.`); if (!SCENE_TYPES.includes(s.scene_type)) e.push(`Scene ${i+1} has an invalid scene_type "${s.scene_type}".`); });
+  if (!Array.isArray(o.quiz)) e.push('quiz must be an array.');
+  return e;
+}
+
+async function sampleJsonRepaired(prompt, validate, opts={}){
+  const sample = await getSample();
+  if (!sample) throw {code:'unavailable'};
+  let lastText = '', problems = [];
+  for (let attempt = 0; attempt < 2; attempt++){
+    const p = attempt === 0 ? prompt : prompt + `\n\nYOUR PREVIOUS REPLY HAD PROBLEMS:\n- ${problems.join('\n- ')}\n${lastText ? 'Previous reply (start):\n' + lastText.slice(0, 3000) + '\n' : ''}Return the complete corrected JSON object only.`;
+    try {
+      const obj = await sample.json(p, {modelTier:'default', signal:opts.signal, cache: attempt === 0 && !opts.noCache});
+      problems = validate(obj);
+      if (!problems.length) return obj;
+      lastText = JSON.stringify(obj);
+    } catch (e) {
+      if (e && e.code === 'invalid_json'){ problems = ['The reply was not valid JSON (or was cut off). Keep it shorter.']; lastText = e.text || ''; continue; }
+      throw e;
+    }
+  }
+  const err = new Error(problems.join(' ')); err.code = 'invalid_json'; throw err;
+}
+
+async function generateScene(form, outline, sc, idx, opts={}){
+  const platform = form.platform;
+  const obj = await sampleJsonRepaired(scenePrompt(form, outline, sc, idx, opts.instruction), o => {
+    if (!o || typeof o !== 'object') return ['Reply was not a JSON object.'];
+    const copy = deepClone(o);
+    const r = validateScene(copy, platform, outline.quiz.length);
+    const errs = [...r.errors];
+    if (!Array.isArray(o.beats) || !o.beats.length) errs.push('beats must be a non-empty array.');
+    if (platform === 'scratch' && ['demonstration','code_walkthrough'].includes(sc.scene_type) && !(o.blocks||[]).length) errs.push('This scene must include Scratch blocks.');
+    if (['python','roblox'].includes(platform) && ['demonstration','code_walkthrough','output'].includes(sc.scene_type) && !String(o.code||'').trim()) errs.push('This scene must include code.');
+    return errs;
+  }, opts);
+  obj.scene_id = sc.scene_id; obj.scene_type = sc.scene_type;
+  if (!obj.title) obj.title = sc.title;
+  const r = validateScene(obj, platform, outline.quiz.length);
+  obj._warnings = r.warnings;
+  return obj;
+}
+
+async function generateLesson(form, onStep, signal){
+  onStep({key:'plan', state:'run', label:'Planning the lesson', sub:'Objectives, scene plan, quiz and challenge'});
+  const outline = await sampleJsonRepaired(outlinePrompt(form), validateOutline, {signal});
+  outline.scenes.forEach((s, i) => { s.scene_id = 'scene_' + (i+1); });
+  const tmp = {platform:form.platform, lesson_title:outline.lesson_title, quiz:outline.quiz, common_mistakes:outline.common_mistakes, learning_objectives:outline.learning_objectives, prerequisites:outline.prerequisites,
+    practice_activity:outline.practice_activity, challenge:outline.challenge, recap:outline.recap, scenes:[{beats:[{narration:'x'}]}]};
+  validateLesson(tmp);
+  for (const k of ['quiz','common_mistakes','learning_objectives','prerequisites','practice_activity','challenge','recap']) outline[k] = tmp[k];
+  onStep({key:'plan', state:'done', label:'Planned: ' + outline.lesson_title, sub:outline.scenes.length + ' scenes'});
+  outline.scenes.forEach((s, i) => onStep({key:s.scene_id, state:'wait', label:`Scene ${i+1}: ${s.title}`, sub:s.scene_type.replace('_',' ')}));
+  const scenes = new Array(outline.scenes.length);
+  let next = 0; const failures = [];
+  async function worker(){
+    while (next < outline.scenes.length){
+      const i = next++; const s = outline.scenes[i];
+      if (signal && signal.aborted) return;
+      onStep({key:s.scene_id, state:'run'});
+      try { scenes[i] = await generateScene(form, outline, s, i, {signal}); onStep({key:s.scene_id, state:'done', sub:(scenes[i].beats.length) + ' beats' + (scenes[i]._warnings.length ? ' · ' + scenes[i]._warnings.length + ' auto-fixes' : '')}); }
+      catch (e) {
+        if (e && e.code === 'cancelled') throw e;
+        failures.push(s.title);
+        scenes[i] = {scene_id:s.scene_id, scene_type:s.scene_type, title:s.title, code:'', blocks:[], expected_output:'', beats:[{narration:`This scene still needs content: ${s.goal || s.title}.`, events:[{type:'SHOW_TEXT', style:'heading', text:s.title}]}], _warnings:['AI could not write this scene. Use "Rewrite with AI" or edit it by hand.']};
+        onStep({key:s.scene_id, state:'fail', sub:aiErrorCopy(e)});
+      }
+    }
+  }
+  const n = clamp((Server.config && Server.config.aiConcurrency) || 2, 1, 4);
+  await Promise.all(Array.from({length:n}, worker));
+  const lesson = {
+    id: uid('l'), createdAt: Date.now(), updatedAt: Date.now(),
+    platform: form.platform, grade: form.age, difficulty: form.difficulty.toLowerCase(), duration_minutes: form.duration,
+    topic: form.topic, teaching_style: form.style, form,
+    lesson_title: outline.lesson_title, learning_objectives: outline.learning_objectives, prerequisites: outline.prerequisites,
+    final_program: String(outline.final_program || ''),
+    scenes, common_mistakes: outline.common_mistakes, practice_activity: outline.practice_activity,
+    challenge: outline.challenge, recap: outline.recap, quiz: outline.quiz
+  };
+  validateLesson(lesson);
+  return {lesson, failures};
+}
+
+/* ---------- Python sandbox ----------
+   Code is executed by the server's sandbox container: no network, read-only filesystem, CPU / memory /
+   process / output limits, a wall-clock timeout, and an unprivileged user. Nothing runs in the web server process. */
+const runCache = new Map();
+async function runPython(code){
+  if (runCache.has(code)) return runCache.get(code);
+  if (!Server.config || !Server.config.sandbox) return {ok:false, unavailable:true, output:'', error:'Python execution is not available on this server.', source:'none'};
+  try {
+    const r = await api('POST', '/api/run', {code});
+    const res = {ok:!!r.ok, output:r.stdout || '', error:(r.stderr || '').trim(), source:'sandbox'};
+    runCache.set(code, res); return res;
+  } catch (e) { return {ok:false, unavailable:true, output:'', error:e.message, source:'none'}; }
+}
+function sceneOutput(lesson, scene){
+  if (lesson.platform === 'python' && scene.code){
+    const r = runCache.get(scene.code);
+    if (r && !r.unavailable) return {text: (r.output || '') + (r.error ? (r.output ? '\n' : '') + r.error : ''), error:!r.ok, label:'Output'};
+  }
+  return {text: scene.expected_output || '', error:false, label: lesson.platform === 'python' ? 'Expected output' : 'Output'};
+}
+async function prepareOutputs(lesson){
+  if (lesson.platform !== 'python') return;
+  for (const s of lesson.scenes) if (s.code && s.beats.some(b => b.events.some(e => e.type === 'SHOW_OUTPUT'))) await runPython(s.code);
+}
+
+/* ---------- timeline engine ---------- */
+function evDuration(e, lines){
+  switch (e.type){
+    case 'TYPE_CODE': { const n = e.lines.reduce((a, l) => a + (lines[l-1] || '').length + 1, 0); return clamp(n / 22, 0.5, 7); }
+    case 'MOVE_AGENT': return Math.max(0.45, e.steps * 0.45);
+    case 'TURN_AGENT': return 0.5;
+    case 'PLACE_BLOCK': return 0.45;
+    case 'SHOW_OUTPUT': return 1.2;
+    case 'DEMO': return ({move:0.9, turn:0.5, collect:1.4, touch:1.6, jump:0.7, go_to:0.9}[e.action]) || 0.45;
+    case 'HIGHLIGHT_CODE': case 'HIGHLIGHT_BLOCK': return 0.35;
+    default: return 0.35;
+  }
+}
+function chunkNarration(text){
+  const ws = String(text||'').trim().split(/\s+/).filter(Boolean);
+  if (!ws.length) return [];
+  const chunks = []; let cur = [];
+  for (const w of ws){
+    cur.push(w);
+    if (cur.length >= 13 || (cur.length >= 6 && /[.!?;:]$/.test(w))){ chunks.push(cur.join(' ')); cur = []; }
+  }
+  if (cur.length) chunks.push(cur.join(' '));
+  const total = ws.length; let acc = 0;
+  return chunks.map(c => { const n = words(c); const r = {text:c, from:acc/total, to:(acc+n)/total}; acc += n; return r; });
+}
+function compileLesson(lesson, wps=2.6){
+  const tl = {scenes:[], total:0}; let t = 0;
+  lesson.scenes.forEach((scene, si) => {
+    const lines = scene.code ? codeLines(scene.code) : [];
+    const c = {scene, index:si, start:t, events:[], beats:[], lines};
+    t += 0.5;
+    for (const b of scene.beats){
+      const ad = VoiceAI.duration(b.narration);
+      const speak = ad ? ad + 0.3 : (b.narration ? words(b.narration) / wps + 0.35 : 0.8);
+      let cursor = t; const evs = [];
+      for (const e of b.events){
+        const dur = evDuration(e, lines);
+        const time = e.at != null ? t + e.at * speak : cursor;
+        evs.push(Object.assign({}, e, {time, dur}));
+        cursor = SEQ_EVENTS.has(e.type) ? Math.max(cursor, time + dur) : Math.max(cursor, time);
+      }
+      const end = Math.max(t + speak, cursor + 0.3);
+      c.beats.push({start:t, end, speak, narration:b.narration, chunks:chunkNarration(b.narration)});
+      c.events.push(...evs);
+      t = end;
+    }
+    t += 0.7;
+    c.end = t;
+    c.events.sort((a, b) => a.time - b.time);
+    tl.scenes.push(c);
+  });
+  tl.total = t;
+  return tl;
+}
+function sceneAt(tl, T){
+  let c = tl.scenes[0];
+  for (const s of tl.scenes){ if (s.start <= T) c = s; else break; }
+  return c;
+}
+function beatAt(c, T){ for (const b of c.beats) if (T >= b.start && T < b.end) return b; return null; }
+
+const DIRV = [[0,-1],[1,0],[0,1],[-1,0]];
+function sceneStateAt(c, T){
+  const n = c.lines.length;
+  const st = {
+    texts:[], revealed:new Array(n).fill(0), cursor:null, hl:null,
+    blocks:new Map(), bhl:null, output:null,
+    agent:{x:2, y:3, z:0, dir:1, rot:90}, placed:[],
+    sprite:{x:-150, y:-40, dir:90, say:'', visible:true, coin:true, vars:{}},
+    rbx:{charX:0, coin:1, color:null, jump:0},
+    challenge:null, quiz:null, reveal:null, lastTypeEnd:-1
+  };
+  const fullLines = ls => (ls || Array.from({length:n}, (_, i) => i+1)).forEach(l => { st.revealed[l-1] = (c.lines[l-1] || '').length + 1; });
+  for (const e of c.events){
+    if (e.time > T) break;
+    const p = e.dur ? clamp((T - e.time) / e.dur, 0, 1) : 1;
+    switch (e.type){
+      case 'SHOW_TEXT': st.texts.push({text:e.text, style:e.style, t0:e.time}); break;
+      case 'SHOW_CODE': fullLines(e.lines); break;
+      case 'TYPE_CODE': {
+        const total = e.lines.reduce((a, l) => a + (c.lines[l-1] || '').length + 1, 0);
+        let k = Math.floor(total * p);
+        for (const l of e.lines){
+          const len = (c.lines[l-1] || '').length + 1;
+          const take = Math.min(len, k);
+          st.revealed[l-1] = Math.max(st.revealed[l-1], take);
+          if (p < 1 && take < len && take >= 0 && k >= 0){ st.cursor = {line:l-1, col:Math.min(take, len-1)}; k = -1; break; }
+          k -= take;
+        }
+        if (p >= 1){ const last = e.lines[e.lines.length-1]; st.cursor = {line:last-1, col:(c.lines[last-1]||'').length, idle:true}; }
+        break;
+      }
+      case 'HIGHLIGHT_CODE': fullLines(e.lines); st.hl = {lines:e.lines, match:e.match, t0:e.time}; break;
+      case 'CLEAR_HIGHLIGHT': st.hl = null; st.bhl = null; break;
+      case 'SHOW_BLOCK': if (!st.blocks.has(e.block_id)) st.blocks.set(e.block_id, e.time); break;
+      case 'HIGHLIGHT_BLOCK': if (!st.blocks.has(e.block_id)) st.blocks.set(e.block_id, e.time); st.bhl = {id:e.block_id, t0:e.time}; break;
+      case 'SHOW_OUTPUT': st.output = {p, t0:e.time}; break;
+      case 'MOVE_AGENT': {
+        const a = st.agent; let dx = 0, dy = 0, dz = 0;
+        const d = e.direction;
+        if (d === 'up') dz = 1; else if (d === 'down') dz = -1;
+        else { const off = {forward:0, right:1, back:2, left:3}[d]; const v = DIRV[(a.dir + off) % 4]; dx = v[0]; dy = v[1]; }
+        const pe = ease(p);
+        if (p >= 1){ a.x += dx * e.steps; a.y += dy * e.steps; a.z = Math.max(0, a.z + dz * e.steps); }
+        else { a.x += dx * e.steps * pe; a.y += dy * e.steps * pe; a.z = Math.max(0, a.z + dz * e.steps * pe); }
+        a.x = clamp(a.x, 0, 11); a.y = clamp(a.y, 0, 7);
+        break;
+      }
+      case 'TURN_AGENT': {
+        const a = st.agent; const s = e.direction === 'right' ? 1 : -1;
+        if (p >= 1){ a.dir = (a.dir + s + 4) % 4; a.rot = a.dir * 90; } else a.rot = a.dir * 90 + s * 90 * ease(p);
+        break;
+      }
+      case 'PLACE_BLOCK': {
+        const a = st.agent; const gx = Math.round(a.x), gy = Math.round(a.y);
+        let x = gx, y = gy, z = Math.round(a.z) - 1;
+        if (e.direction === 'forward'){ x = gx + DIRV[a.dir][0]; y = gy + DIRV[a.dir][1]; z = Math.round(a.z); }
+        st.placed = st.placed.filter(b => !(b.x === x && b.y === y && b.z === z));
+        st.placed.push({x, y, z:Math.max(-1, z), block:e.block, p});
+        break;
+      }
+      case 'DEMO': applyDemo(st, e, p); break;
+      case 'SHOW_CHALLENGE': st.challenge = {text:e.text, t0:e.time}; break;
+      case 'SHOW_QUIZ': st.quiz = {index:e.index, t0:e.time}; st.reveal = null; break;
+      case 'REVEAL_ANSWER': st.quiz = st.quiz || {index:e.index, t0:e.time}; st.reveal = {index:e.index, t0:e.time}; break;
+    }
+  }
+  return st;
+}
+function applyDemo(st, e, p){
+  const s = st.sprite, r = st.rbx, pe = ease(p);
+  switch (e.action){
+    case 'move': { const d = parseFloat(e.value) || 10; const rad = (s.dir - 90) * Math.PI/180; s.x = clamp(s.x + Math.cos(rad) * d * pe, -220, 220); s.y = clamp(s.y - Math.sin(rad) * d * pe, -160, 160); break; }
+    case 'turn': s.dir += (parseFloat(e.value) || 15) * pe; break;
+    case 'say': s.say = e.value || ''; break;
+    case 'go_to': { const [x, y] = String(e.value||'0,0').split(',').map(Number); s.x += ((x||0) - s.x) * pe; s.y += ((y||0) - s.y) * pe; break; }
+    case 'collect': { if (!s.coin) break; s.x += (130 - s.x) * pe; s.y += (0 - s.y) * pe; if (p >= 1){ s.coin = false; const k = Object.keys(s.vars)[0] || 'score'; s.vars[k] = (parseFloat(s.vars[k]) || 0) + 1; } break; }
+    case 'set_var': { const [k, v] = String(e.value||'score=0').split('='); s.vars[k.trim()] = (v ?? '0').trim(); break; }
+    case 'change_var': { const m = String(e.value||'score+1').match(/^\s*([^+\-]+)\s*([+\-])\s*([\d.]+)/); if (m){ const k = m[1].trim(); s.vars[k] = (parseFloat(s.vars[k]) || 0) + (m[2] === '-' ? -1 : 1) * parseFloat(m[3]); } break; }
+    case 'hide': s.visible = false; break;
+    case 'show': s.visible = true; break;
+    case 'touch': r.charX = r.charX + (1 - r.charX) * pe; break;
+    case 'disappear': r.coin = 1 - p; break;
+    case 'spawn': r.coin = p; break;
+    case 'color': r.color = e.value || 'Bright red'; break;
+    case 'jump': r.jump = Math.sin(p * Math.PI); break;
+  }
+}
+
+/* ---------- canvas renderers ---------- */
+const V = { // video palette
+  bg:'#121A2B', bg2:'#18223A', panel:'#1B2540', line:'#2B3757', ink:'#EEF2FA', muted:'#93A0BC',
+  marker:'#FFD54A', ok:'#5DD39E', bad:'#FF7A7A', accent:'#7B95FF',
+  ed:'#0F1626', edGutter:'#5F6B86', kw:'#C9A2FF', str:'#9BE3A8', num:'#FFB86B', com:'#6F7C98', fn:'#8FB4FF', bi:'#56D6C9'
+};
+const FONT_UI = 'Figtree, system-ui, -apple-system, "Segoe UI", sans-serif';
+const FONT_HEAD = '"Bricolage Grotesque", Figtree, system-ui, sans-serif';
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace';
+
+function rr(ctx, x, y, w, h, r){ r = Math.min(r, w/2, h/2); ctx.beginPath(); ctx.moveTo(x+r, y); ctx.arcTo(x+w, y, x+w, y+h, r); ctx.arcTo(x+w, y+h, x, y+h, r); ctx.arcTo(x, y+h, x, y, r); ctx.arcTo(x, y, x+w, y, r); ctx.closePath(); }
+function wrap(ctx, text, maxW){
+  const out = []; for (const para of String(text||'').split('\n')){
+    const ws = para.split(' '); let line = '';
+    for (const w of ws){ const t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line){ out.push(line); line = w; } else line = t; }
+    out.push(line);
+  } return out;
+}
+
+const KW = {
+  python:new Set('def return if elif else for while in import from as class try except finally with pass break continue and or not is None True False lambda global nonlocal yield'.split(' ')),
+  luau:new Set('local function end if then else elseif for do while repeat until return and or not nil true false in break continue'.split(' ')),
+  javascript:new Set('let const var function return if else for while do break continue new true false null undefined of in class'.split(' '))
+};
+const BUILTINS = {
+  python:new Set('print range len input int str float list dict set tuple abs min max sum sorted enumerate zip round type'.split(' ')),
+  luau:new Set('print game workspace script task Instance Vector3 CFrame BrickColor Color3 math string table wait pairs ipairs'.split(' ')),
+  javascript:new Set('player agent blocks loops mobs console Math FORWARD BACK LEFT RIGHT UP DOWN LEFT_TURN RIGHT_TURN PLACE_ON_MOVE'.split(' '))
+};
+function tokenizeLine(line, lang){
+  const com = lang === 'python' ? '#' : lang === 'luau' ? '--' : '//';
+  const toks = []; let i = 0;
+  const push = (t, c) => { if (t) toks.push({t, c}); };
+  while (i < line.length){
+    if (line.startsWith(com, i)){ push(line.slice(i), V.com); break; }
+    const ch = line[i];
+    if (ch === '"' || ch === "'" || (ch === '`' && lang === 'javascript')){
+      let j = i + 1; while (j < line.length && line[j] !== ch){ if (line[j] === '\\') j++; j++; }
+      push(line.slice(i, j+1), V.str); i = j + 1; continue;
+    }
+    if (/[0-9]/.test(ch)){ let j = i; while (j < line.length && /[0-9.]/.test(line[j])) j++; push(line.slice(i, j), V.num); i = j; continue; }
+    if (/[A-Za-z_]/.test(ch)){
+      let j = i; while (j < line.length && /[A-Za-z0-9_]/.test(line[j])) j++;
+      const w = line.slice(i, j);
+      let c = V.ink;
+      if (KW[lang] && KW[lang].has(w)) c = V.kw;
+      else if (BUILTINS[lang] && BUILTINS[lang].has(w)) c = V.bi;
+      else if (line[j] === '(' || (line[j] === ':' && lang === 'luau' && /[A-Z]/.test(w[0]))) c = V.fn;
+      push(w, c); i = j; continue;
+    }
+    let j = i; while (j < line.length && !/[A-Za-z0-9_"'`#]/.test(line[j]) && !line.startsWith(com, j)) j++;
+    if (j === i) j = i + 1;
+    push(line.slice(i, j), '#C7D0E3'); i = j;
+  }
+  return toks;
+}
+
+/* Reusable code editor (video). o: {lines, revealed, lang, hl, cursor, title, T} */
+function drawCodeEditor(ctx, x, y, w, h, o){
+  ctx.save();
+  rr(ctx, x, y, w, h, 14); ctx.fillStyle = V.ed; ctx.fill();
+  ctx.strokeStyle = V.line; ctx.lineWidth = 1; ctx.stroke();
+  // tab
+  ctx.fillStyle = V.panel; rr(ctx, x, y, w, 44, 14); ctx.fill(); ctx.fillRect(x, y+30, w, 14);
+  ctx.font = `600 17px ${FONT_UI}`;
+  const tabW = Math.max(120, ctx.measureText(o.title).width + 40);
+  ctx.fillStyle = V.ed; rr(ctx, x+14, y+8, tabW, 36, 8); ctx.fill(); ctx.fillRect(x+14, y+30, tabW, 14);
+  ctx.fillStyle = V.ink; ctx.textBaseline = 'middle';
+  ctx.fillText(o.title, x+32, y+27);
+  const fs = o.fontSize || 26, lh = Math.round(fs * 1.48);
+  ctx.font = `400 ${fs}px ${FONT_MONO}`;
+  const cw = ctx.measureText('M').width;
+  const gutter = x + 22 + cw * 2.6;
+  const top = y + 64, maxRows = Math.floor((h - 80) / lh);
+  let lastVis = -1; o.revealed.forEach((v, i) => { if (v > 0) lastVis = i; });
+  const focus = Math.max(o.cursor ? o.cursor.line : -1, o.hl ? o.hl.lines[o.hl.lines.length-1] - 1 : -1, lastVis);
+  const first = Math.max(0, focus - maxRows + 2);
+  ctx.beginPath(); ctx.rect(x, y+48, w, h-52); ctx.clip();
+  for (let r = 0; r < maxRows; r++){
+    const i = first + r; if (i > lastVis && !(o.cursor && o.cursor.line === i)) break;
+    const ly = top + r * lh + lh/2;
+    const line = o.lines[i] || '';
+    const hlOn = o.hl && o.hl.lines.includes(i+1);
+    if (hlOn){
+      const a = clamp((o.T - o.hl.t0) / 0.25, 0, 1);
+      ctx.fillStyle = `rgba(255,213,74,${0.13*a})`; ctx.fillRect(x+4, ly - lh/2, w-8, lh);
+      ctx.fillStyle = V.marker; ctx.globalAlpha = a; ctx.fillRect(x+4, ly - lh/2, 5, lh); ctx.globalAlpha = 1;
+    }
+    ctx.textAlign = 'right'; ctx.fillStyle = hlOn ? V.marker : V.edGutter; ctx.font = `400 ${fs*0.82}px ${FONT_MONO}`;
+    ctx.fillText(String(i+1), gutter - 18, ly);
+    ctx.textAlign = 'left'; ctx.font = `400 ${fs}px ${FONT_MONO}`;
+    const vis = Math.min(o.revealed[i] || 0, line.length);
+    let col = 0;
+    for (const tk of tokenizeLine(line, o.lang)){
+      if (col >= vis) break;
+      const part = tk.t.slice(0, vis - col);
+      ctx.fillStyle = tk.c; ctx.fillText(part, gutter + col * cw, ly);
+      col += tk.t.length;
+    }
+    if (hlOn && o.hl.match){
+      const idx = line.indexOf(o.hl.match);
+      if (idx >= 0 && idx < vis){
+        const pw = clamp((o.T - o.hl.t0 - 0.1) / 0.35, 0, 1);
+        const mx = gutter + idx * cw - 4, mw = (o.hl.match.length * cw + 8) * ease(pw);
+        ctx.save(); ctx.fillStyle = V.marker; rr(ctx, mx, ly - fs*0.72, mw, fs*1.44, 6); ctx.fill();
+        ctx.beginPath(); ctx.rect(mx, ly - lh/2, mw, lh); ctx.clip();
+        ctx.fillStyle = '#1A1A1A'; ctx.font = `600 ${fs}px ${FONT_MONO}`; ctx.fillText(o.hl.match, gutter + idx * cw, ly); ctx.restore();
+      }
+    }
+    if (o.cursor && o.cursor.line === i){
+      const blink = o.cursor.idle ? (Math.floor(o.T * 2) % 2 === 0) : true;
+      if (blink){ ctx.fillStyle = V.marker; ctx.fillRect(gutter + o.cursor.col * cw + 1, ly - fs*0.62, 3, fs*1.24); }
+    }
+  }
+  ctx.restore();
+}
+
+function drawConsole(ctx, x, y, w, h, out, st, title){
+  ctx.save();
+  rr(ctx, x, y, w, h, 14); ctx.fillStyle = '#0B111E'; ctx.fill(); ctx.strokeStyle = V.line; ctx.stroke();
+  ctx.font = `600 17px ${FONT_UI}`; ctx.fillStyle = V.muted; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  ctx.fillText(title || out.label, x + 20, y + 26);
+  ctx.fillStyle = V.line; ctx.fillRect(x, y + 48, w, 1);
+  if (st.output){
+    ctx.font = `400 22px ${FONT_MONO}`;
+    ctx.fillStyle = V.ok; ctx.fillText('▶ run', x + 20, y + 76);
+    const lines = String(out.text || '').replace(/\n$/,'').split('\n');
+    const lh = 31, max = Math.floor((h - 110) / lh);
+    const shown = Math.ceil(lines.length * st.output.p);
+    const startI = Math.max(0, shown - max);
+    ctx.beginPath(); ctx.rect(x, y+50, w, h-54); ctx.clip();
+    for (let i = startI; i < shown; i++){
+      ctx.fillStyle = out.error && i >= lines.length - 1 ? V.bad : V.ink;
+      let t = lines[i]; while (t.length && ctx.measureText(t).width > w - 40) t = t.slice(0, -1);
+      ctx.fillText(t, x + 20, y + 112 + (i - startI) * lh);
+    }
+  } else {
+    ctx.font = `400 19px ${FONT_UI}`; ctx.fillStyle = '#56627E';
+    ctx.fillText('Output appears when the code runs', x + 20, y + 80);
+  }
+  ctx.restore();
+}
+
+/* Block renderer (Scratch and MakeCode share it; colors and shapes come from the registry) */
+function blockDef(set, b){
+  if (b.name === 'custom' || !set.blocks[b.name]) return {cat:b.category || 'custom', shape:b.shape || 'stack', label:b.label || b.name};
+  return set.blocks[b.name];
+}
+function shade(hex, f){
+  const m = hex.match(/^#([0-9a-f]{6})$/i); if (!m) return hex;
+  const n = parseInt(m[1], 16); let r = n >> 16, g = (n >> 8) & 255, bl = n & 255;
+  r = Math.round(clamp(r * f, 0, 255)); g = Math.round(clamp(g * f, 0, 255)); bl = Math.round(clamp(bl * f, 0, 255));
+  return '#' + ((1 << 24) | (r << 16) | (g << 8) | bl).toString(16).slice(1);
+}
+function labelTokens(ctx, def, b, fs){
+  const parts = def.label.split(/(\[[A-Z_]+\]|\([A-Z_]+\)|<[A-Z_]+>)/).filter(s => s !== '');
+  const toks = [];
+  for (const p of parts){
+    const m = p.match(/^([\[(<])([A-Z_]+)[\])>]$/);
+    if (m){
+      const val = b.args[m[2]] ?? (def.def || {})[m[2]] ?? '';
+      const kind = m[1] === '[' ? 'str' : m[1] === '(' ? 'num' : 'bool';
+      ctx.font = `600 ${fs*0.9}px ${FONT_UI}`;
+      const tw = ctx.measureText(val || ' ').width;
+      toks.push({kind, text:val, w: tw + (kind === 'bool' ? 34 : 22)});
+    } else {
+      ctx.font = `700 ${fs}px ${FONT_UI}`;
+      for (const piece of p.trim() ? [p.trim()] : []) toks.push({kind:'text', text:piece, w:ctx.measureText(piece).width});
+    }
+  }
+  return toks;
+}
+function isBlockVisible(b, vis){ return vis.has(b.id) || b.children.some(c => isBlockVisible(c, vis)) || b.else.some(c => isBlockVisible(c, vis)); }
+function layoutStack(ctx, set, list, x, y, vis, ops, fs){
+  let cy = y, maxW = 0;
+  const rowH = Math.round(fs * 2.05), arm = Math.round(fs * 0.9), mouthMin = Math.round(fs * 1.2), foot = Math.round(fs * 1.0);
+  for (const b of list){
+    if (!isBlockVisible(b, vis)) continue;
+    const def = blockDef(set, b);
+    const toks = labelTokens(ctx, def, b, fs);
+    const lw = toks.reduce((a, t) => a + t.w, 0) + (toks.length - 1) * 8 + 28;
+    const hatH = def.shape === 'hat' ? Math.round(fs * 0.8) : 0;
+    const op = {b, def, toks, x, y:cy + hatH, w:Math.max(lw, fs * 5), rowH, hatH, color:set.colors[def.cat] || '#888'};
+    ops.push(op);
+    let h = rowH;
+    if (def.shape === 'c' || def.shape === 'e'){
+      const inner = layoutStack(ctx, set, b.children, x + arm, cy + hatH + rowH, vis, ops, fs);
+      op.mouth1 = Math.max(mouthMin, inner.h); h += op.mouth1;
+      op.w = Math.max(op.w, inner.w + arm + 20);
+      if (def.shape === 'e'){
+        op.elseY = cy + hatH + h; h += rowH * 0.8;
+        const inner2 = layoutStack(ctx, set, b.else, x + arm, cy + hatH + h, vis, ops, fs);
+        op.mouth2 = Math.max(mouthMin, inner2.h); h += op.mouth2;
+        op.w = Math.max(op.w, inner2.w + arm + 20);
+      }
+      h += foot; op.arm = arm; op.foot = foot;
+    }
+    op.h = h;
+    cy += hatH + h; maxW = Math.max(maxW, op.w);
+  }
+  return {h:cy - y, w:maxW};
+}
+function drawBlockOp(ctx, op, st, T, fs){
+  const {x, y, w, rowH, color, def} = op;
+  const t0 = st.blocks.get(op.b.id);
+  const born = t0 == null ? 1 : clamp((T - t0) / 0.3, 0, 1);
+  ctx.save();
+  ctx.globalAlpha = born;
+  const dark = shade(color, 0.78);
+  ctx.beginPath();
+  if (def.shape === 'c' || def.shape === 'e'){
+    const a = op.arm; let yy = y;
+    ctx.moveTo(x, yy); ctx.lineTo(x + w, yy); ctx.lineTo(x + w, yy + rowH); ctx.lineTo(x + a, yy + rowH);
+    yy += rowH + op.mouth1;
+    ctx.lineTo(x + a, yy);
+    if (def.shape === 'e'){ ctx.lineTo(x + w, yy); ctx.lineTo(x + w, yy + rowH*0.8); ctx.lineTo(x + a, yy + rowH*0.8); yy += rowH*0.8 + op.mouth2; ctx.lineTo(x + a, yy); }
+    ctx.lineTo(x + w * 0.6, yy); ctx.lineTo(x + w * 0.6, yy + op.foot); ctx.lineTo(x, yy + op.foot); ctx.closePath();
+  } else {
+    rr(ctx, x, y, w, rowH, 6);
+  }
+  ctx.fillStyle = color; ctx.fill();
+  ctx.lineJoin = 'round'; ctx.strokeStyle = dark; ctx.lineWidth = 2; ctx.stroke();
+  if (def.shape === 'hat'){ ctx.beginPath(); ctx.ellipse(x + fs*2.4, y + 2, fs*2.4, op.hatH + 2, 0, Math.PI, 0); ctx.fillStyle = color; ctx.fill(); ctx.stroke(); ctx.fillRect(x + 1.5, y, fs*4.8, 4); }
+  ctx.restore();
+  // highlight glow
+  if (st.bhl && st.bhl.id === op.b.id){
+    const a = clamp((T - st.bhl.t0) / 0.25, 0, 1);
+    ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = V.marker; ctx.lineWidth = 5; ctx.shadowColor = V.marker; ctx.shadowBlur = 18;
+    rr(ctx, x - 5, y - 5 - (op.hatH || 0), w + 10, (def.shape === 'c' || def.shape === 'e' ? rowH : rowH) + 10 + (op.hatH||0), 9); ctx.stroke(); ctx.restore();
+  }
+  // label
+  ctx.save(); ctx.globalAlpha = born; ctx.textBaseline = 'middle';
+  let cx = x + 14; const cyy = y + rowH/2;
+  for (const t of op.toks){
+    if (t.kind === 'text'){ ctx.font = `700 ${fs}px ${FONT_UI}`; ctx.fillStyle = '#FFFFFF'; ctx.fillText(t.text, cx, cyy); }
+    else if (t.kind === 'bool'){
+      const hh = rowH * 0.66, hw = t.w;
+      ctx.beginPath(); ctx.moveTo(cx + hh/2, cyy - hh/2); ctx.lineTo(cx + hw - hh/2, cyy - hh/2); ctx.lineTo(cx + hw, cyy); ctx.lineTo(cx + hw - hh/2, cyy + hh/2); ctx.lineTo(cx + hh/2, cyy + hh/2); ctx.lineTo(cx, cyy); ctx.closePath();
+      ctx.fillStyle = shade(color, 0.72); ctx.fill();
+      ctx.font = `600 ${fs*0.9}px ${FONT_UI}`; ctx.fillStyle = '#FFFFFF'; ctx.fillText(t.text, cx + 17, cyy);
+    } else {
+      const hh = rowH * 0.66;
+      rr(ctx, cx, cyy - hh/2, t.w, hh, t.kind === 'num' ? hh/2 : 6); ctx.fillStyle = '#FFFFFF'; ctx.fill();
+      ctx.font = `600 ${fs*0.9}px ${FONT_UI}`; ctx.fillStyle = '#4A4F5C'; ctx.fillText(t.text, cx + 11, cyy);
+    }
+    cx += t.w + 8;
+  }
+  if (def.shape === 'e' && op.elseY != null){ ctx.font = `700 ${fs}px ${FONT_UI}`; ctx.fillStyle = '#FFFFFF'; ctx.fillText('else', x + 14, op.elseY + rowH*0.4); }
+  ctx.restore();
+}
+function drawBlocksPanel(ctx, x, y, w, h, scene, set, st, T, title){
+  ctx.save();
+  rr(ctx, x, y, w, h, 14); ctx.fillStyle = '#F4F6FA'; ctx.fill();
+  ctx.fillStyle = '#E3E7EF'; rr(ctx, x, y, w, 44, 14); ctx.fill(); ctx.fillRect(x, y+30, w, 14);
+  ctx.font = `600 17px ${FONT_UI}`; ctx.fillStyle = '#3C4459'; ctx.textBaseline = 'middle'; ctx.fillText(title, x + 20, y + 23);
+  // dotted workspace
+  ctx.fillStyle = '#DCE1EA'; for (let gx = x + 24; gx < x + w; gx += 28) for (let gy = y + 64; gy < y + h; gy += 28) ctx.fillRect(gx, gy, 2, 2);
+  let fs = 21; const ops = [];
+  let lay = {h:0, w:0}; let cy = 0;
+  const measure = f => { ops.length = 0; let yy = 0, mw = 0; for (const script of scene.blocks){ const r = layoutStack(ctx, set, [script], 0, yy, st.blocks, ops, f); if (r.h){ yy += r.h + f * 1.6; mw = Math.max(mw, r.w); } } return {h:yy, w:mw}; };
+  lay = measure(fs);
+  const availW = w - 60, availH = h - 90;
+  if (lay.h > availH || lay.w > availW){ fs = Math.max(12, fs * Math.min(availH / Math.max(1, lay.h), availW / Math.max(1, lay.w))); lay = measure(fs); }
+  ctx.beginPath(); ctx.rect(x, y + 46, w, h - 48); ctx.clip();
+  ctx.translate(x + 34, y + 76);
+  for (const op of ops) drawBlockOp(ctx, op, st, T, fs);
+  ctx.restore();
+}
+
+/* Stages */
+function drawScratchStage(ctx, x, y, w, h, st, T){
+  ctx.save();
+  rr(ctx, x, y, w, h, 14); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.strokeStyle = '#CCD3E0'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.beginPath(); rr(ctx, x, y, w, h, 14); ctx.clip();
+  ctx.fillStyle = '#EAF4FF'; ctx.fillRect(x, y, w, h * 0.68); ctx.fillStyle = '#D7EBC9'; ctx.fillRect(x, y + h * 0.68, w, h * 0.32);
+  const sx = v => x + w/2 + v * (w / 480), sy = v => y + h/2 - v * (h / 360);
+  const s = st.sprite;
+  if (s.coin){ const cx = sx(130), cy = sy(0); ctx.fillStyle = '#F6C445'; ctx.beginPath(); ctx.arc(cx, cy, 20, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = '#C9971E'; ctx.lineWidth = 3; ctx.stroke(); ctx.fillStyle = '#C9971E'; ctx.font = `700 18px ${FONT_UI}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('★', cx, cy + 1); }
+  if (s.visible){
+    const px = sx(s.x), py = sy(s.y);
+    ctx.save(); ctx.translate(px, py); ctx.rotate((s.dir - 90) * Math.PI / 180);
+    ctx.fillStyle = '#FF8A3D'; ctx.beginPath(); ctx.ellipse(0, 0, 34, 30, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#E56E22'; ctx.beginPath(); ctx.moveTo(-20, -22); ctx.lineTo(-12, -42); ctx.lineTo(-4, -26); ctx.fill(); ctx.beginPath(); ctx.moveTo(6, -27); ctx.lineTo(16, -42); ctx.lineTo(22, -21); ctx.fill();
+    ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(10, -6, 9, 0, Math.PI*2); ctx.arc(-8, -6, 8, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#1D2433'; ctx.beginPath(); ctx.arc(13, -5, 4, 0, Math.PI*2); ctx.arc(-5, -5, 4, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+    if (s.say){
+      ctx.font = `600 18px ${FONT_UI}`; const lines = wrap(ctx, s.say, 200); const bw = Math.max(...lines.map(l => ctx.measureText(l).width)) + 28, bh = lines.length * 24 + 18;
+      const bx = clamp(px + 20, x + 8, x + w - bw - 8), by = clamp(py - 50 - bh, y + 8, y + h - bh - 8);
+      rr(ctx, bx, by, bw, bh, 12); ctx.fillStyle = '#FFFFFF'; ctx.fill(); ctx.strokeStyle = '#B8C1D3'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#2A3142'; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; lines.forEach((l, i) => ctx.fillText(l, bx + 14, by + 10 + i * 24));
+    }
+  }
+  let my = y + 12;
+  for (const [k, v] of Object.entries(s.vars)){
+    ctx.font = `600 16px ${FONT_UI}`; const kw = ctx.measureText(k).width, vw = Math.max(30, ctx.measureText(String(v)).width + 16);
+    rr(ctx, x + 12, my, kw + vw + 30, 32, 6); ctx.fillStyle = '#EEF1F6'; ctx.fill(); ctx.strokeStyle = '#C3CAD8'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = '#3B4256'; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillText(k, x + 22, my + 16);
+    rr(ctx, x + 22 + kw + 8, my + 5, vw, 22, 5); ctx.fillStyle = '#FF8C1A'; ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.fillText(String(v), x + 22 + kw + 8 + vw/2, my + 16);
+    my += 40;
+  }
+  ctx.restore();
+}
+function drawMinecraftWorld(ctx, x, y, w, h, st, T){
+  ctx.save();
+  rr(ctx, x, y, w, h, 14); ctx.fillStyle = '#8EC7EE'; ctx.fill();
+  ctx.beginPath(); rr(ctx, x, y, w, h, 14); ctx.clip();
+  const cols = 12, rows = 8; const ts = Math.min((w - 40) / cols, (h - 90) / rows);
+  const ox = x + (w - cols * ts) / 2, oy = y + 60;
+  ctx.font = `600 16px ${FONT_UI}`; ctx.fillStyle = '#123'; ctx.textBaseline = 'middle'; ctx.fillText('World view — Agent', x + 18, y + 28);
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++){
+    ctx.fillStyle = (r + c) % 2 ? '#6FAE45' : '#78B84D'; ctx.fillRect(ox + c * ts, oy + r * ts, ts, ts);
+  }
+  ctx.fillStyle = '#5A8E36'; ctx.fillRect(ox, oy + rows * ts, cols * ts, 10);
+  const cube = (bx, by, bz, col, p) => {
+    const s = ts * (0.6 + 0.4 * ease(p == null ? 1 : p)); const lift = (bz + 1) * ts * 0.35;
+    const px = ox + bx * ts + (ts - s)/2, py = oy + by * ts + (ts - s)/2 - lift;
+    ctx.fillStyle = shade(col.startsWith('#') ? col : '#B0DEFF', 0.7); ctx.fillRect(px, py + s, s, ts * 0.22);
+    ctx.fillStyle = col; ctx.fillRect(px, py, s, s);
+    ctx.strokeStyle = 'rgba(0,0,0,.25)'; ctx.lineWidth = 1; ctx.strokeRect(px + .5, py + .5, s - 1, s - 1);
+  };
+  const sorted = [...st.placed].sort((a, b) => a.z - b.z || a.y - b.y);
+  for (const b of sorted) cube(b.x, b.y, b.z, MC_BLOCKS[b.block] || '#888', b.p);
+  // agent
+  const a = st.agent, lift = a.z * ts * 0.35;
+  const ax = ox + a.x * ts + ts/2, ay = oy + a.y * ts + ts/2 - lift;
+  ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(ox + a.x * ts + ts/2, oy + a.y * ts + ts * 0.8, ts * 0.36, ts * 0.14, 0, 0, Math.PI*2); ctx.fill();
+  ctx.save(); ctx.translate(ax, ay); ctx.rotate(a.rot * Math.PI / 180);
+  rr(ctx, -ts*0.38, -ts*0.38, ts*0.76, ts*0.76, ts*0.14); ctx.fillStyle = '#56657A'; ctx.fill();
+  ctx.strokeStyle = '#2E3949'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#7CE0F0'; rr(ctx, -ts*0.24, -ts*0.34, ts*0.48, ts*0.14, 4); ctx.fill(); // visor shows facing (up = forward)
+  ctx.restore();
+  ctx.restore();
+}
+const RBX_COLORS = {'bright red':'#C4281C','lime green':'#00FF00','really blue':'#0000FF','new yeller':'#FFFF00','bright blue':'#0D69AC','bright green':'#4B974B','really red':'#FF0000','institutional white':'#F8F8F8','black':'#1B2A35','bright yellow':'#F5CD30','hot pink':'#FF66CC','bright orange':'#DA8541'};
+function drawRobloxViewport(ctx, x, y, w, h, st, T){
+  ctx.save();
+  rr(ctx, x, y, w, h, 12); ctx.fillStyle = '#2B2D31'; ctx.fill();
+  ctx.fillStyle = '#3A3C42'; rr(ctx, x, y, w, 34, 12); ctx.fill(); ctx.fillRect(x, y+20, w, 14);
+  ctx.font = `600 15px ${FONT_UI}`; ctx.fillStyle = '#D6D9E0'; ctx.textBaseline = 'middle'; ctx.fillText('Viewport · Workspace › Coin › Script', x + 14, y + 18);
+  ctx.beginPath(); ctx.rect(x + 2, y + 34, w - 4, h - 36); ctx.clip();
+  const g = ctx.createLinearGradient(0, y + 34, 0, y + h); g.addColorStop(0, '#9FD3FF'); g.addColorStop(1, '#D8EEFF'); ctx.fillStyle = g; ctx.fillRect(x, y + 34, w, h);
+  const hy = y + h * 0.48, by = y + h;
+  ctx.fillStyle = '#7C8288'; ctx.beginPath(); ctx.moveTo(x + w*0.18, hy); ctx.lineTo(x + w*0.82, hy); ctx.lineTo(x + w*1.1, by); ctx.lineTo(x - w*0.1, by); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.18)'; ctx.lineWidth = 1;
+  for (let i = 0; i <= 10; i++){ const t = i/10; ctx.beginPath(); ctx.moveTo(x + w*(0.18 + 0.64*t), hy); ctx.lineTo(x + w*(-0.1 + 1.2*t), by); ctx.stroke(); }
+  for (let i = 1; i <= 6; i++){ const t = Math.pow(i/6, 1.6); const yy = hy + (by - hy) * t; ctx.beginPath(); ctx.moveTo(x, yy); ctx.lineTo(x + w, yy); ctx.stroke(); }
+  const r = st.rbx;
+  const coinX = x + w * 0.7, coinY = y + h * 0.72;
+  if (r.coin > 0.01){
+    ctx.save(); ctx.globalAlpha = r.coin; const spin = Math.abs(Math.cos(T * 2.2));
+    const col = r.color ? (RBX_COLORS[r.color.toLowerCase()] || '#F5CD30') : '#F5CD30';
+    ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(coinX, coinY - 30, 26 * (0.25 + 0.75*spin), 26, 0, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = shade(col, 0.7); ctx.lineWidth = 3; ctx.stroke(); ctx.restore();
+  }
+  const cx = x + w * (0.22 + 0.42 * r.charX), cy = y + h * 0.8 - r.jump * 40;
+  ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.beginPath(); ctx.ellipse(cx, y + h * 0.8 + 4, 24, 7, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#3E7CB1'; ctx.fillRect(cx - 18, cy - 62, 36, 40); // torso
+  ctx.fillStyle = '#2F3A4A'; ctx.fillRect(cx - 18, cy - 22, 17, 22); ctx.fillRect(cx + 1, cy - 22, 17, 22); // legs
+  ctx.fillStyle = '#E8C9A0'; ctx.fillRect(cx - 28, cy - 60, 10, 34); ctx.fillRect(cx + 18, cy - 60, 10, 34); // arms
+  rr(ctx, cx - 14, cy - 92, 28, 28, 6); ctx.fill(); // head
+  ctx.fillStyle = '#1B2230'; ctx.fillRect(cx - 7, cy - 82, 4, 5); ctx.fillRect(cx + 3, cy - 82, 4, 5);
+  ctx.restore();
+}
+
+function drawCaption(ctx, c, T){
+  const b = beatAt(c, T); if (!b || !b.chunks.length) return;
+  const frac = clamp((T - b.start) / Math.max(0.1, b.speak), 0, 0.999);
+  const ch = b.chunks.find(k => frac >= k.from && frac < k.to) || b.chunks[b.chunks.length-1];
+  ctx.save(); ctx.font = `600 28px ${FONT_UI}`;
+  const lines = wrap(ctx, ch.text, 1000).slice(0, 2);
+  const bw = Math.max(...lines.map(l => ctx.measureText(l).width)) + 48, bh = lines.length * 38 + 22;
+  const bx = (W - bw) / 2, by = 690 - bh;
+  rr(ctx, bx, by, bw, bh, 12); ctx.fillStyle = 'rgba(6,9,16,.82)'; ctx.fill();
+  ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  lines.forEach((l, i) => ctx.fillText(l, W/2, by + 12 + i * 38));
+  ctx.restore();
+}
+
+function layoutKind(scene, platform){
+  const hasCode = !!scene.code.trim(), hasBlocks = scene.blocks.length > 0;
+  if (platform === 'scratch' && hasBlocks) return 'scratch';
+  if (platform === 'minecraft' && (hasBlocks || hasCode || scene.beats.some(b => b.events.some(e => /AGENT|PLACE_BLOCK/.test(e.type))))) return 'minecraft';
+  if (platform === 'roblox' && (hasCode || scene.beats.some(b => b.events.some(e => e.type === 'DEMO')))) return 'roblox';
+  if (hasCode) return 'code';
+  if (platform === 'scratch' && scene.beats.some(b => b.events.some(e => e.type === 'DEMO'))) return 'scratch';
+  return 'slide';
+}
+
+function drawTextSlide(ctx, st, T){
+  let yy = 150;
+  const heading = [...st.texts].reverse().find(t => t.style === 'heading');
+  if (heading){
+    ctx.font = `700 60px ${FONT_HEAD}`;
+    const lines = wrap(ctx, heading.text, 1040).slice(0, 2);
+    const p = clamp((T - heading.t0) / 0.5, 0, 1);
+    lines.forEach((l, i) => {
+      const lw = ctx.measureText(l).width;
+      ctx.fillStyle = V.marker; ctx.globalAlpha = 0.9; ctx.fillRect(116, yy + i*72 + 16, (lw + 12) * ease(p), 22); ctx.globalAlpha = 1;
+      ctx.fillStyle = V.ink; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left'; ctx.fillText(l, 120, yy + i*72 + 30);
+    });
+    yy += lines.length * 72 + 50;
+  }
+  const items = st.texts.filter(t => t.style !== 'heading').slice(-6);
+  for (const t of items){
+    const a = clamp((T - t.t0) / 0.35, 0, 1);
+    ctx.globalAlpha = a; ctx.font = `500 34px ${FONT_UI}`;
+    const lines = wrap(ctx, t.text, 960).slice(0, 2);
+    const glyph = t.style === 'mistake' ? '✕' : t.style === 'fix' ? '✓' : t.style === 'callout' ? '!' : '';
+    if (glyph){ ctx.fillStyle = t.style === 'mistake' ? V.bad : t.style === 'fix' ? V.ok : V.marker; ctx.font = `700 32px ${FONT_UI}`; ctx.fillText(glyph, 124, yy + 4); }
+    else { ctx.fillStyle = V.marker; ctx.fillRect(126, yy - 14, 14, 14); }
+    ctx.fillStyle = V.ink; ctx.font = `500 34px ${FONT_UI}`;
+    lines.forEach((l, i) => ctx.fillText(l, 170, yy + i * 44));
+    yy += lines.length * 44 + 22; ctx.globalAlpha = 1;
+    if (yy > 560) break;
+  }
+}
+function drawCallout(ctx, st, T){
+  const t = st.texts[st.texts.length - 1]; if (!t) return;
+  const a = clamp((T - t.t0) / 0.3, 0, 1);
+  ctx.save(); ctx.globalAlpha = a; ctx.font = `600 22px ${FONT_UI}`;
+  let txt = t.text; while (ctx.measureText(txt).width > 1150 && txt.length > 4) txt = txt.slice(0, -2);
+  if (txt !== t.text) txt = txt.trim() + '…';
+  const bw = ctx.measureText(txt).width + 44;
+  rr(ctx, 40, 72, bw, 38, 19); ctx.fillStyle = t.style === 'mistake' ? '#4A2128' : t.style === 'fix' ? '#1E3F31' : '#2A3456'; ctx.fill();
+  ctx.fillStyle = t.style === 'mistake' ? V.bad : t.style === 'fix' ? V.ok : V.marker; ctx.beginPath(); ctx.arc(58, 91, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = V.ink; ctx.textBaseline = 'middle'; ctx.fillText(txt, 72, 92);
+  ctx.restore();
+}
+function drawQuiz(ctx, lesson, st, T, full){
+  const qq = lesson.quiz[st.quiz.index - 1]; if (!qq) return;
+  const a = clamp((T - st.quiz.t0) / 0.35, 0, 1);
+  ctx.save(); ctx.globalAlpha = a;
+  if (!full){ ctx.fillStyle = 'rgba(10,14,24,.88)'; ctx.fillRect(0, 60, W, 540); }
+  ctx.font = `600 22px ${FONT_UI}`; ctx.fillStyle = V.marker; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+  ctx.fillText(`Question ${st.quiz.index} of ${lesson.quiz.length}`, 120, 140);
+  ctx.font = `700 42px ${FONT_HEAD}`; ctx.fillStyle = V.ink;
+  const ql = wrap(ctx, qq.question, 1040).slice(0, 3); ql.forEach((l, i) => ctx.fillText(l, 120, 196 + i * 52));
+  const top = 196 + ql.length * 52 + 20;
+  const reveal = st.reveal && st.reveal.index === st.quiz.index;
+  qq.options.forEach((opt, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const bx = 120 + col * 530, by = top + row * 96, bw = 500, bh = 80;
+    const correct = i === qq.answer_index;
+    rr(ctx, bx, by, bw, bh, 14);
+    ctx.fillStyle = reveal ? (correct ? '#1E4D37' : '#1B2338') : V.panel; ctx.fill();
+    ctx.strokeStyle = reveal && correct ? V.ok : V.line; ctx.lineWidth = reveal && correct ? 3 : 1.5; ctx.stroke();
+    ctx.fillStyle = reveal && correct ? V.ok : V.marker; ctx.font = `700 26px ${FONT_UI}`; ctx.textBaseline = 'middle';
+    ctx.fillText(String.fromCharCode(65 + i), bx + 24, by + bh/2);
+    ctx.fillStyle = reveal && !correct ? V.muted : V.ink; ctx.font = `500 26px ${FONT_UI}`;
+    let t = opt; while (ctx.measureText(t).width > bw - 110 && t.length > 3) t = t.slice(0, -2); if (t !== opt) t += '…';
+    ctx.fillText(t, bx + 64, by + bh/2);
+    if (reveal && correct){ ctx.fillStyle = V.ok; ctx.font = `700 30px ${FONT_UI}`; ctx.fillText('✓', bx + bw - 44, by + bh/2); }
+  });
+  ctx.restore();
+}
+function drawChallenge(ctx, lesson, st, T){
+  const a = clamp((T - st.challenge.t0) / 0.4, 0, 1);
+  ctx.save(); ctx.globalAlpha = a;
+  ctx.fillStyle = 'rgba(10,14,24,.78)'; ctx.fillRect(0, 60, W, 540);
+  const bx = 160, by = 130, bw = 960;
+  ctx.font = `500 34px ${FONT_UI}`; const lines = wrap(ctx, st.challenge.text, bw - 100).slice(0, 6);
+  const bh = 140 + lines.length * 46;
+  rr(ctx, bx, by, bw, bh, 20); ctx.fillStyle = '#1D2742'; ctx.fill(); ctx.strokeStyle = V.marker; ctx.lineWidth = 3; ctx.stroke();
+  ctx.fillStyle = V.marker; ctx.fillRect(bx, by + 30, 8, 52);
+  ctx.font = `700 44px ${FONT_HEAD}`; ctx.fillStyle = V.ink; ctx.textBaseline = 'middle'; ctx.textAlign = 'left'; ctx.fillText('Your challenge', bx + 50, by + 56);
+  ctx.font = `500 34px ${FONT_UI}`; ctx.fillStyle = '#DCE3F2';
+  lines.forEach((l, i) => ctx.fillText(l, bx + 50, by + 120 + i * 46));
+  ctx.restore();
+}
+
+function renderFrame(ctx, lesson, tl, T, opts={}){
+  const c = sceneAt(tl, T); if (!c) return;
+  const sc = c.scene, P = PLATFORMS[lesson.platform];
+  const st = sceneStateAt(c, T);
+  ctx.save();
+  ctx.setTransform(opts.scale || 1, 0, 0, opts.scale || 1, 0, 0);
+  ctx.fillStyle = V.bg; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = 'rgba(255,255,255,.025)'; for (let gx = 0; gx < W; gx += 40) ctx.fillRect(gx, 0, 1, H);
+  // header
+  ctx.fillStyle = V.bg2; ctx.fillRect(0, 0, W, 60);
+  ctx.font = `600 16px ${FONT_UI}`; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+  const chip = P.label; const cw = ctx.measureText(chip).width + 34;
+  rr(ctx, 24, 15, cw, 30, 15); ctx.fillStyle = 'rgba(255,255,255,.07)'; ctx.fill();
+  ctx.fillStyle = P.color; ctx.beginPath(); ctx.arc(40, 30, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = V.ink; ctx.fillText(chip, 52, 31);
+  ctx.font = `700 22px ${FONT_HEAD}`; ctx.fillStyle = V.ink;
+  let title = sc.title; while (ctx.measureText(title).width > 760 && title.length > 4) title = title.slice(0, -2);
+  ctx.fillText(title, 24 + cw + 18, 31);
+  ctx.font = `500 15px ${FONT_UI}`; ctx.fillStyle = V.muted; ctx.textAlign = 'right';
+  ctx.fillText(`${lesson.lesson_title.slice(0, 40)}  ·  ${c.index + 1}/${tl.scenes.length}`, W - 24, 31);
+  ctx.textAlign = 'left';
+  // body
+  const kind = layoutKind(sc, lesson.platform);
+  const out = sceneOutput(lesson, sc);
+  const editorOpts = (w) => ({lines:c.lines, revealed:st.revealed, lang:P.lang || 'python', hl:st.hl, cursor:st.cursor, title:P.file || 'code', T, fontSize: c.lines.length > 12 ? 22 : 26});
+  if (kind === 'slide'){ if (!(st.quiz)) drawTextSlide(ctx, st, T); }
+  else {
+    drawCallout(ctx, st, T);
+    if (kind === 'code'){ drawCodeEditor(ctx, 40, 122, 790, 468, editorOpts()); drawConsole(ctx, 850, 122, 390, 468, out, st); }
+    else if (kind === 'roblox'){
+      if (sc.code.trim()) drawCodeEditor(ctx, 40, 122, 700, 468, editorOpts()); else drawTextSlideMini(ctx, st, T, 40, 122, 700);
+      drawRobloxViewport(ctx, 760, 122, 480, 300, st, T);
+      drawConsole(ctx, 760, 432, 480, 158, out, st, 'Output');
+    } else if (kind === 'scratch'){
+      drawBlocksPanel(ctx, 40, 122, 690, 468, sc, BLOCK_SETS.scratch, st, T, 'Code — Scratch blocks');
+      drawScratchStage(ctx, 750, 122, 490, 368, st, T);
+      if (sc.expected_output && st.output){ ctx.font = `500 18px ${FONT_UI}`; ctx.fillStyle = V.muted; const l = wrap(ctx, sc.expected_output, 480).slice(0, 3); l.forEach((t, i) => ctx.fillText(t, 752, 512 + i * 24)); }
+    } else if (kind === 'minecraft'){
+      if (sc.blocks.length) drawBlocksPanel(ctx, 40, 122, 650, 468, sc, BLOCK_SETS.makecode, st, T, 'MakeCode — Blocks');
+      else if (sc.code.trim()) drawCodeEditor(ctx, 40, 122, 650, 468, Object.assign(editorOpts(), {title:'MakeCode — JavaScript', fontSize:22}));
+      else drawTextSlideMini(ctx, st, T, 40, 122, 650);
+      drawMinecraftWorld(ctx, 710, 122, 530, 468, st, T);
+    }
+  }
+  if (st.quiz) drawQuiz(ctx, lesson, st, T, kind === 'slide');
+  if (st.challenge) drawChallenge(ctx, lesson, st, T);
+  if (opts.captions !== false) drawCaption(ctx, c, T);
+  // scene transition
+  const into = T - c.start;
+  if (into < 0.35){ ctx.fillStyle = `rgba(18,26,43,${1 - into / 0.35})`; ctx.fillRect(0, 60, W, H - 60); }
+  ctx.restore();
+}
+function drawTextSlideMini(ctx, st, T, x, y, w){
+  ctx.save(); rr(ctx, x, y, w, 468, 14); ctx.fillStyle = V.panel; ctx.fill();
+  let yy = y + 60;
+  for (const t of st.texts.slice(-6)){
+    ctx.globalAlpha = clamp((T - t.t0) / 0.35, 0, 1);
+    ctx.font = t.style === 'heading' ? `700 34px ${FONT_HEAD}` : `500 26px ${FONT_UI}`;
+    ctx.fillStyle = t.style === 'heading' ? V.ink : '#D5DCEA';
+    for (const l of wrap(ctx, t.text, w - 60).slice(0, 2)){ ctx.fillText(l, x + 30, yy); yy += t.style === 'heading' ? 44 : 34; }
+    yy += 14;
+  }
+  ctx.restore();
+}
+
+/* ---------- AI narrator voice ----------
+   Each beat's narration is synthesized once on the server (cached), decoded with Web Audio, and its real length
+   becomes the beat's length in the timeline — so code, highlights and voice line up exactly, and the same audio
+   is mixed into the exported video. */
+const VoiceAI = {
+  enabled:false, voice:'Achird', ctx:null, dest:null, buffers:new Map(), sources:new Set(), preparing:null,
+  speed(){ return clamp(Player.wps / 2.6, 0.7, 1.4); },
+  key(t){ return this.voice + '|' + this.speed().toFixed(2) + '|' + t; },
+  duration(t){ if (!this.enabled || !t) return 0; const b = this.buffers.get(this.key(t)); return b ? b.duration : 0; },
+  ensureCtx(){
+    if (!this.ctx){ const AC = window.AudioContext || window.webkitAudioContext; this.ctx = new AC(); this.dest = this.ctx.createMediaStreamDestination(); }
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    return this.ctx;
+  },
+  missing(lesson){ const all = [...new Set(lesson.scenes.flatMap(s => s.beats.map(b => b.narration)).filter(Boolean))]; return {all, todo:all.filter(t => !this.buffers.has(this.key(t)))}; },
+  async prepare(lesson, onProgress){
+    this.ensureCtx();
+    const {all, todo} = this.missing(lesson);
+    let done = all.length - todo.length, i = 0, failed = null;
+    onProgress && onProgress(done, all.length);
+    const worker = async () => {
+      while (i < todo.length && !failed){
+        const t = todo[i++], k = this.key(t);
+        try {
+          const r = await api('POST', '/api/tts', {text:t, voice:this.voice, speed:this.speed()});
+          const ab = await (await fetch(r.url, {credentials:'same-origin'})).arrayBuffer();
+          this.buffers.set(k, await this.ctx.decodeAudioData(ab));
+          onProgress && onProgress(++done, all.length);
+        } catch (e) { failed = e; }
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+    if (failed) throw failed;
+  },
+  play(text, offset, toRecorder){
+    const b = this.buffers.get(this.key(text)); if (!b || !this.ctx || offset >= b.duration) return;
+    const s = this.ctx.createBufferSource(); s.buffer = b;
+    s.connect(this.ctx.destination); if (toRecorder) s.connect(this.dest);
+    s.start(0, Math.max(0, offset)); this.sources.add(s); s.onended = () => this.sources.delete(s);
+  },
+  stopAll(){ for (const s of this.sources){ try { s.stop(); } catch {} } this.sources.clear(); }
+};
+
+/* ---------- player & recorder ---------- */
+const Player = {
+  canvas:null, ctx:null, lesson:null, tl:null, t:0, playing:false, last:0, raf:0,
+  voice:true, voiceMode:'browser', captions:true, wps:2.6, voiceName:'', speakingBeat:null, holdStart:0, recording:false, rangeEnd:null,
+  attach(canvas, lesson){
+    this.canvas = canvas; this.ctx = canvas.getContext('2d'); this.lesson = lesson;
+    this.rebuild(); this.draw(); cancelAnimationFrame(this.raf); this.raf = requestAnimationFrame(n => this.loop(n));
+  },
+  rebuild(){ this.tl = compileLesson(this.lesson, this.wps); this.t = clamp(this.t, 0, this.tl.total); },
+  detach(){ this.pause(); cancelAnimationFrame(this.raf); this.canvas = null; },
+  play(){ if (VoiceAI.enabled) VoiceAI.ensureCtx(); if (this.t >= this.tl.total - 0.05) this.t = 0; this.playing = true; this.last = performance.now(); this.speakingBeat = null; const b = beatAt(sceneAt(this.tl, this.t), this.t); this.spokenKey = (!VoiceAI.enabled && b && this.t - b.start > 0.3) ? b : null; updateTransport(); },
+  pause(){ this.playing = false; this.rangeEnd = null; if (window.speechSynthesis) speechSynthesis.cancel(); VoiceAI.stopAll(); this.speakingBeat = null; updateTransport(); },
+  seek(t){ const was = this.playing; this.pause(); this.t = clamp(t, 0, this.tl.total); this.draw(); if (was) this.play(); updateTransport(); },
+  speak(b){
+    if (VoiceAI.enabled){ VoiceAI.play(b.narration, this.t - b.start, false); return; }
+    if (!window.speechSynthesis || !b.narration) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(b.narration);
+    const v = speechSynthesis.getVoices().find(x => x.name === this.voiceName); if (v) u.voice = v;
+    u.rate = clamp(this.wps / 2.6, 0.7, 1.4);
+    this.speakingBeat = b;
+    u.onend = u.onerror = () => { if (this.speakingBeat === b) this.speakingBeat = null; };
+    speechSynthesis.speak(u);
+  },
+  loop(now){
+    this.raf = requestAnimationFrame(n => this.loop(n));
+    if (this.recording || !this.canvas) return;
+    if (this.playing){
+      let dt = Math.min(0.1, (now - this.last) / 1000); this.last = now;
+      const c = sceneAt(this.tl, this.t), b = beatAt(c, this.t);
+      if (this.voice && b && b !== this.spokenKey){ this.spokenKey = b; this.speak(b); this.holdStart = 0; }
+      // voice-locked timing: wait at the end of a beat until the voice finishes the sentence (max 4 s)
+      if (this.voice && b && this.speakingBeat === b && this.t + dt >= b.end - 0.02){
+        if (!this.holdStart) this.holdStart = now;
+        if (now - this.holdStart < 4000) dt = 0; else this.holdStart = 0;
+      }
+      this.t += dt;
+      const end = this.rangeEnd ?? this.tl.total;
+      if (this.t >= end){ this.t = end; this.pause(); }
+      updateTransport();
+    }
+    this.draw();
+  },
+  draw(){ if (!this.canvas) return; renderFrame(this.ctx, this.lesson, this.tl, this.t, {captions:this.captions, scale:this.canvas.width / W}); }
+};
+function pickMime(withAudio){
+  if (!window.MediaRecorder) return null;
+  const list = withAudio
+    ? ['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4;codecs=avc1,mp4a.40.2','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm']
+    : ['video/mp4;codecs=avc1.42E01E','video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+  for (const m of list) if (MediaRecorder.isTypeSupported(m)) return m;
+  return null;
+}
+async function saveFile(filename, data){
+  const blob = data instanceof Blob ? data : new Blob([data], {type:'application/octet-stream'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+  return true;
+}
+function safeName(s){ return String(s || 'lesson').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'lesson'; }
+
+async function recordRange(t0, t1, label){
+  const withAudio = VoiceAI.enabled;
+  const mime = pickMime(withAudio);
+  if (!mime || !Player.canvas.captureStream){ toast('This browser cannot record video. Use Chrome or Edge.'); return; }
+  Player.pause();
+  const ov = $('#rec-overlay'); ov.hidden = false;
+  let cancelled = false; $('#rec-cancel').onclick = () => { cancelled = true; };
+  try {
+    if (withAudio){
+      $('#rec-label').textContent = 'Preparing the narrator voice…';
+      await VoiceAI.prepare(Player.lesson, (d, n) => { $('#rec-bar').style.width = (100 * d / Math.max(1, n)) + '%'; $('#rec-time').textContent = `${d} / ${n} sentences`; });
+      Player.rebuild();
+      const c0 = sceneAt(Player.tl, t0); if (label !== 'full lesson'){ t0 = c0.start; t1 = c0.end; } else t1 = Player.tl.total;
+    }
+    $('#rec-label').textContent = 'Running the code examples…';
+    await prepareOutputs(Player.lesson);
+  } catch (e) { ov.hidden = true; toast('Could not prepare the video: ' + (e.message || e.code)); return; }
+  $('#rec-label').textContent = `Rendering ${label}…`;
+  const vstream = Player.canvas.captureStream(30);
+  const tracks = [...vstream.getVideoTracks()];
+  if (withAudio){ VoiceAI.ensureCtx(); tracks.push(...VoiceAI.dest.stream.getAudioTracks()); }
+  const stream = new MediaStream(tracks);
+  const rec = new MediaRecorder(stream, {mimeType:mime, videoBitsPerSecond:6_000_000, audioBitsPerSecond:160_000});
+  const chunks = []; rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  const done = new Promise(r => rec.onstop = r);
+  Player.recording = true;
+  rec.start(500);
+  const start = performance.now();
+  let lastBeat = null;
+  await new Promise(res => {
+    const step = now => {
+      const T = t0 + (now - start) / 1000;
+      const Tc = Math.min(T, t1);
+      if (withAudio){
+        const b = beatAt(sceneAt(Player.tl, Tc), Tc);
+        if (b && b !== lastBeat){ lastBeat = b; VoiceAI.play(b.narration, Tc - b.start, true); }
+      }
+      renderFrame(Player.ctx, Player.lesson, Player.tl, Tc, {captions:Player.captions, scale:Player.canvas.width / W});
+      $('#rec-bar').style.width = (100 * clamp((T - t0) / (t1 - t0), 0, 1)) + '%';
+      $('#rec-time').textContent = `${fmtTime(T - t0)} / ${fmtTime(t1 - t0)} — keep this tab visible while rendering`;
+      if (T >= t1 + 0.4 || cancelled) return res();
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+  rec.stop(); await done; Player.recording = false; VoiceAI.stopAll();
+  vstream.getTracks().forEach(t => t.stop());
+  if (cancelled){ ov.hidden = true; toast('Rendering cancelled.'); return; }
+  let blob = new Blob(chunks, {type:mime.split(';')[0]});
+  let ext = mime.includes('mp4') ? 'mp4' : 'webm';
+  if (ext === 'webm' && Server.config && Server.config.ffmpeg){
+    $('#rec-label').textContent = 'Converting to MP4…'; $('#rec-time').textContent = 'This can take a minute for long lessons.'; $('#rec-bar').style.width = '100%';
+    try {
+      const res = await fetch('/api/convert', {method:'POST', credentials:'same-origin', headers:{'content-type':'video/webm'}, body:blob});
+      if (!res.ok){ let m = ''; try { m = (await res.json()).message; } catch {} throw new Error(m || 'conversion failed'); }
+      blob = await res.blob(); ext = 'mp4';
+    } catch (e) { toast('MP4 conversion failed, saving WebM instead: ' + e.message); }
+  }
+  ov.hidden = true;
+  await saveFile(`${safeName(Player.lesson.lesson_title)}${label === 'full lesson' ? '' : '-' + safeName(label)}.${ext}`, blob);
+  toast(`Saved ${ext.toUpperCase()} (${(blob.size / 1048576).toFixed(1)} MB)`);
+}
+function buildVTT(tl){
+  const ts = s => { const h = Math.floor(s/3600), m = Math.floor(s%3600/60), sec = (s%60).toFixed(3).padStart(6,'0'); return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${sec}`; };
+  let out = 'WEBVTT\n\n', n = 1;
+  for (const c of tl.scenes) for (const b of c.beats) for (const k of b.chunks){
+    const a = b.start + k.from * b.speak, e = b.start + k.to * b.speak;
+    out += `${n++}\n${ts(a)} --> ${ts(e)}\n${k.text}\n\n`;
+  }
+  return out;
+}
+
+/* ---------- app state & views ---------- */
+const App = {view:'loading', lessons:{}, profile:null, current:null, sel:'overview', gen:null, form:null, issues:{}};
+const app = $('#app');
+const saveSoon = debounce(() => { if (App.current){ App.current.updatedAt = Date.now(); Store.saveLesson(App.current); } }, 700);
+
+function go(view, extra={}){
+  if (App.view === 'studio' && view !== 'studio') Player.detach();
+  Object.assign(App, extra); App.view = view; render(); window.scrollTo(0, 0);
+}
+function topbar(){
+  return `<header class="topbar"><button class="brand" data-act="home" aria-label="CodeLesson AI home"><span class="mark" aria-hidden="true"></span>CodeLesson AI</button>
+  <span class="spacer"></span>${App.profile ? `<span class="who">${esc(App.profile.name)}${App.profile.org ? ' · ' + esc(App.profile.org) : ''}</span><button class="btn sm ghost" data-act="logout">Log out</button>` : ''}</header>`;
+}
+function render(){
+  const v = App.view;
+  let body = '';
+  if (v === 'loading') body = `<main><p class="muted">Opening your studio…</p></main>`;
+  else if (v === 'auth') body = viewAuth();
+  else if (v === 'fatal') body = `<main><div class="panel" style="max-width:560px;margin:40px auto"><h1>Can\u2019t reach the server</h1><p class="muted" style="margin-top:8px">${esc(App.fatal || '')}</p><p style="margin-top:16px"><button class="btn primary" onclick="location.reload()">Try again</button></p></div></main>`;
+  else if (v === 'dashboard') body = viewDashboard();
+  else if (v === 'create') body = viewCreate();
+  else if (v === 'generating') body = viewGenerating();
+  else if (v === 'review') body = viewReview();
+  else if (v === 'studio') body = viewStudio();
+  app.innerHTML = topbar() + body;
+  if (v === 'studio') mountStudio();
+}
+
+function viewAuth(){
+  const signup = App.authMode !== 'login';
+  const canSignup = !Server.config || Server.config.signup;
+  if (signup && !canSignup) App.authMode = 'login';
+  return `<main><div class="panel" style="max-width:480px;margin:40px auto">
+  <h1>${signup && canSignup ? 'Create your account' : 'Log in'}</h1>
+  <p class="muted" style="margin:8px 0 22px">${signup && canSignup ? 'Turn coding lessons into professional teaching videos in minutes.' : 'Welcome back.'}</p>
+  <form id="auth-form" class="stack" novalidate>
+    ${signup && canSignup ? `<label class="field">Your name<input type="text" name="name" required autocomplete="name" placeholder="Ms. Rivera"></label>
+    <label class="field">School or company <span class="hint">Optional</span><input type="text" name="org" autocomplete="organization" placeholder="Brightside Coding Academy"></label>` : ''}
+    <label class="field">Email<input type="text" inputmode="email" name="email" required autocomplete="email"></label>
+    <label class="field">Password ${signup && canSignup ? '<span class="hint">At least 8 characters</span>' : ''}<input type="password" name="password" required autocomplete="${signup ? 'new-password' : 'current-password'}"></label>
+    <div class="notice err" id="auth-err" hidden></div>
+    <div><button class="btn primary big" type="submit">${signup && canSignup ? 'Sign up' : 'Log in'}</button></div>
+    ${canSignup ? `<p class="small muted">${signup ? 'Already have an account?' : 'New here?'} <button type="button" class="btn sm ghost" data-act="auth-switch">${signup ? 'Log in' : 'Create an account'}</button></p>` : ''}
+  </form></div></main>`;
+}
+function platformChip(p){ const P = PLATFORMS[p] || PLATFORMS.python; return `<span class="chip"><i style="background:${P.color}"></i>${esc(P.label)}</span>`; }
+function viewDashboard(){
+  const list = Object.values(App.lessons).sort((a, b) => (b.updatedAt||0) - (a.updatedAt||0));
+  const cards = list.map(l => {
+    const tl = compileLesson(l);
+    return `<article class="lesson-item">${platformChip(l.platform)}<h3>${esc(l.lesson_title)}</h3>
+      <p class="meta">${esc(l.grade || '')}${l.difficulty ? ' · ' + esc(l.difficulty) : ''} · ${l.scenes.length} scenes · ${fmtTime(tl.total)} video</p>
+      <p class="meta">Edited ${new Date(l.updatedAt || Date.now()).toLocaleDateString()}</p>
+      <div class="actions"><button class="btn sm" data-act="open" data-id="${l.id}">Edit lesson</button><button class="btn sm primary" data-act="open-studio" data-id="${l.id}">Open studio</button><button class="btn sm ghost danger" data-act="delete" data-id="${l.id}" aria-label="Delete ${esc(l.lesson_title)}">Delete</button></div></article>`;
+  }).join('');
+  const samples = Object.values(PLATFORMS).map(P => `<button class="sample" data-act="sample" data-p="${P.id}"><span class="chip"><i style="background:${P.color}"></i>${esc(P.label)}</span><strong>${esc(SAMPLE_TITLES[P.id])}</strong><span class="muted small">${esc(P.blurb)}</span></button>`).join('');
+  return `<main>
+  <div class="page-head"><div><h1>Your lessons</h1><p class="muted">Turn a coding lesson plan into a narrated, synchronized teaching video.</p></div>
+  <button class="btn primary big" data-act="new">New lesson</button></div>
+  ${list.length ? `<div class="lesson-list">${cards}</div>` : `<div class="empty"><h2>No lessons yet</h2><p class="muted">Create your first lesson, or open a sample to see how the studio works.</p><button class="btn primary" data-act="new">Create a lesson</button></div>`}
+  <h2 class="section-title">Sample lessons</h2><p class="muted">Ready-made, short lessons for each platform. They open without using AI.</p>
+  <div class="samples">${samples}</div>
+  ${serverNotices()}
+  </main>`;
+}
+function serverNotices(){
+  const c = Server.config || {}; const items = [];
+  if (!c.ai) items.push(`Lesson generation is off. Add <code>${aiKeyName()}</code> to <code>.env</code> and restart the server. A free Gemini key comes from aistudio.google.com/apikey.`);
+  if (!c.sandbox) items.push('The Python sandbox isn\u2019t reachable, so videos show the expected output instead of running the code. Start it with <code>docker compose up</code>.');
+  if (!c.tts) items.push(`The AI narrator voice is off, so exported videos have no voice track. Add <code>${c.ttsProvider === 'openai' ? 'OPENAI_API_KEY' : 'GEMINI_API_KEY'}</code> to enable it.`);
+  if (!c.ffmpeg) items.push('ffmpeg isn\u2019t installed, so browsers that can only record WebM can\u2019t export MP4.');
+  return items.length ? `<div class="notice warn" style="margin-top:28px"><b>Server setup</b><ul>${items.map(i => `<li>${i}</li>`).join('')}</ul></div>` : `<p class="muted small" style="margin-top:28px">All services are running: AI generation, Python sandbox, narrator voice and MP4 export.</p>`;
+}
+function seg(name, opts, val){ return `<div class="seg" role="radiogroup">${opts.map(o => `<label><input type="radio" name="${name}" value="${esc(o)}" ${String(o) === String(val) ? 'checked' : ''}><span>${esc(typeof o === 'number' ? o + ' min' : o)}</span></label>`).join('')}</div>`; }
+function viewCreate(){
+  const f = App.form || {platform:'python', age:'12–14 years', difficulty:'Beginner', duration:8, style:'Friendly', topic:'', objective:'', extra:''};
+  return `<main><div class="page-head"><div><h1>New lesson</h1><p class="muted">Describe the lesson. The AI writes the script, code, synchronized scenes, challenge and quiz.</p></div></div>
+  <form id="create-form" class="panel form">
+    <fieldset class="full" style="border:0;padding:0;margin:0"><legend style="font-weight:600;margin-bottom:8px">Coding platform</legend>
+      <div class="platform-pick">${Object.values(PLATFORMS).map(P => `<label><input type="radio" name="platform" value="${P.id}" ${f.platform === P.id ? 'checked' : ''}><strong>${esc(P.label)}</strong><span>${esc(P.blurb)}</span></label>`).join('')}</div></fieldset>
+    <label class="field">Topic<input type="text" name="topic" required value="${esc(f.topic)}" placeholder="For loops"></label>
+    <label class="field">Grade / age<select name="age">${AGES.map(a => `<option ${a === f.age ? 'selected' : ''}>${a}</option>`).join('')}</select></label>
+    <div class="field full"><span>Difficulty</span>${seg('difficulty', DIFFICULTIES, f.difficulty)}</div>
+    <div class="field full"><span>Lesson duration</span>${seg('duration', DURATIONS, f.duration)}</div>
+    <div class="field full"><span>Teaching style</span>${seg('style', STYLES, f.style)}</div>
+    <label class="field full">Learning objective<input type="text" name="objective" value="${esc(f.objective)}" placeholder="Students will understand how a for loop repeats instructions."></label>
+    <label class="field full">Additional instructions <span class="hint">Optional — e.g. "use a space theme", "avoid lists"</span><textarea name="extra" rows="3">${esc(f.extra)}</textarea></label>
+    <div class="full row"><button class="btn primary big" type="submit">Generate lesson</button><button class="btn ghost" type="button" data-act="home">Cancel</button></div>
+  </form></main>`;
+}
+function viewGenerating(){
+  const g = App.gen;
+  const items = g.steps.map(s => `<li class="${s.state}"><span class="dot" aria-hidden="true"></span><div><div>${esc(s.label)}</div>${s.sub ? `<div class="sub">${esc(s.sub)}</div>` : ''}</div></li>`).join('');
+  return `<main><div class="gen"><h1>Generating your lesson</h1>
+  <p class="muted" style="margin-top:8px">${esc(g.form.topic)} · ${esc(PLATFORMS[g.form.platform].label)} · ${g.form.duration} min. Each scene is written, checked against the lesson format, and repaired automatically if needed.</p>
+  <ul class="steps" aria-live="polite">${items}</ul>
+  ${g.error ? `<div class="notice err">${esc(g.error)}</div><div class="row" style="margin-top:14px"><button class="btn primary" data-act="retry-gen">Try again</button><button class="btn" data-act="edit-form">Change details</button></div>` : `<button class="btn" data-act="stop-gen">Stop</button>`}
+  </div></main>`;
+}
+
+function issuesFor(scene){ return App.issues[scene.scene_id] || scene._warnings || []; }
+function viewReview(){
+  const L = App.current;
+  const nav = `<nav class="scene-nav" aria-label="Lesson sections">
+    <button class="${App.sel === 'overview' ? 'on' : ''}" data-act="sel" data-i="overview"><span class="n">—</span><span class="t">Overview, quiz & challenge</span></button><hr>
+    ${L.scenes.map((s, i) => `<button class="${App.sel === i ? 'on' : ''}" data-act="sel" data-i="${i}"><span class="n">${i+1}</span><span class="t">${esc(s.title)}</span>${issuesFor(s).length ? `<span class="w" title="Auto-fixes or issues">●</span>` : ''}</button>`).join('')}
+    <hr><button data-act="add-scene"><span class="n">+</span><span class="t">Add scene</span></button></nav>`;
+  const main = App.sel === 'overview' ? reviewOverview(L) : reviewScene(L, L.scenes[App.sel], App.sel);
+  return `<main><div class="page-head"><div>${platformChip(L.platform)}<h1 style="margin-top:10px">${esc(L.lesson_title)}</h1><p class="muted">Review and edit the lesson, then generate the video.</p></div>
+  <div class="row"><button class="btn" data-act="export-json">Download lesson JSON</button><button class="btn primary big" data-act="studio">Generate video</button></div></div>
+  <div class="editor">${nav}<section class="stack">${main}</section></div></main>`;
+}
+function reviewOverview(L){
+  const lst = k => esc((L[k] || []).join('\n'));
+  return `<div class="panel stack">
+    <label class="field">Lesson title<input type="text" data-f="lesson_title" value="${esc(L.lesson_title)}"></label>
+    <div class="form">
+      <label class="field">Learning objectives <span class="hint">One per line</span><textarea data-f="learning_objectives" data-list="1" rows="4">${lst('learning_objectives')}</textarea></label>
+      <label class="field">Prerequisites <span class="hint">One per line</span><textarea data-f="prerequisites" data-list="1" rows="4">${lst('prerequisites')}</textarea></label>
+      <label class="field">Practice activity<textarea data-f="practice_activity" rows="4">${esc(L.practice_activity)}</textarea></label>
+      <label class="field">Student challenge<textarea data-f="challenge" rows="4">${esc(L.challenge)}</textarea></label>
+      <label class="field full">Recap<textarea data-f="recap" rows="3">${esc(L.recap)}</textarea></label>
+    </div></div>
+    <div class="panel stack"><h2>Common mistakes</h2>
+    ${L.common_mistakes.map((m, i) => `<div class="form"><label class="field">Mistake ${i+1}<input type="text" data-cm="${i}" data-k="mistake" value="${esc(m.mistake)}"></label><label class="field">Fix<input type="text" data-cm="${i}" data-k="fix" value="${esc(m.fix)}"></label></div>`).join('')}
+    <div><button class="btn sm" data-act="add-mistake">Add mistake</button></div></div>
+    <div class="panel stack"><h2>Quiz</h2>
+    ${L.quiz.map((qq, i) => `<div class="quiz-item"><div class="row" style="justify-content:space-between"><b>Question ${i+1}</b><button class="btn sm ghost danger" data-act="del-q" data-i="${i}">Remove</button></div>
+      <input type="text" data-q="${i}" data-k="question" value="${esc(qq.question)}" aria-label="Question ${i+1}">
+      ${qq.options.map((o, j) => `<label class="row small"><input type="radio" name="ans${i}" data-q="${i}" data-k="answer" value="${j}" ${qq.answer_index === j ? 'checked' : ''} aria-label="Mark option ${j+1} correct"><input type="text" data-q="${i}" data-k="opt" data-j="${j}" value="${esc(o)}" style="flex:1" aria-label="Option ${j+1}"></label>`).join('')}
+      <input type="text" data-q="${i}" data-k="explanation" value="${esc(qq.explanation)}" placeholder="Explanation" aria-label="Explanation"></div>`).join('')}
+    <div><button class="btn sm" data-act="add-q">Add question</button></div></div>`;
+}
+function reviewScene(L, s, i){
+  const P = PLATFORMS[L.platform];
+  const iss = issuesFor(s);
+  const hasCodeField = L.platform !== 'scratch';
+  const hasBlocksField = !!P.blockSet;
+  const run = L.platform === 'python' && s.code && runCache.get(s.code);
+  return `<div class="panel stack">
+    <div class="row" style="justify-content:space-between"><h2>Scene ${i+1}</h2>
+      <div class="row"><button class="btn sm" data-act="scene-up" ${i === 0 ? 'disabled' : ''}>Move up</button><button class="btn sm" data-act="scene-down" ${i === L.scenes.length-1 ? 'disabled' : ''}>Move down</button><button class="btn sm ghost danger" data-act="scene-del">Delete scene</button><button class="btn sm primary" data-act="preview-scene">Preview scene</button></div></div>
+    ${iss.length ? `<div class="notice warn"><b>Checked and auto-fixed</b><ul>${iss.slice(0, 8).map(w => `<li>${esc(w)}</li>`).join('')}</ul></div>` : ''}
+    <div class="form">
+      <label class="field">Title<input type="text" data-s="title" value="${esc(s.title)}"></label>
+      <label class="field">Scene type<select data-s="scene_type">${SCENE_TYPES.map(t => `<option ${t === s.scene_type ? 'selected' : ''} value="${t}">${t.replace('_', ' ')}</option>`).join('')}</select></label>
+      <label class="field full">Visual description <span class="hint">Notes for what the screen shows</span><input type="text" data-s="visual_description" value="${esc(s.visual_description)}"></label>
+    </div>
+    ${hasCodeField ? `<label class="field">${L.platform === 'minecraft' ? 'MakeCode JavaScript' : L.platform === 'roblox' ? 'Luau code' : 'Python code'} <span class="hint">Line numbers are used by the sync events below</span><textarea class="code" data-s="code" rows="${Math.max(4, codeLines(s.code).length + 1)}" spellcheck="false">${esc(s.code)}</textarea></label>` : ''}
+    ${hasCodeField || s.expected_output ? `<label class="field">${L.platform === 'python' ? 'Expected output' : 'Expected result / Output window'}<textarea class="code" data-s="expected_output" rows="3" spellcheck="false">${esc(s.expected_output)}</textarea></label>` : ''}
+    ${L.platform === 'python' && s.code ? `<div class="row"><button class="btn sm" data-act="run-code">Run code in sandbox</button><span class="small muted">Runs in the isolated sandbox · 2 s CPU limit · no network · read-only files</span></div>
+      ${run ? `<div class="notice ${run.ok ? (run.output.trim() === s.expected_output.trim() ? 'ok' : 'warn') : 'err'}"><b>${run.ok ? (run.output.trim() === s.expected_output.trim() ? 'Output matches the expected output' : 'Output differs from the expected output') : 'The code raised an error'}</b><pre style="margin:6px 0 0;white-space:pre-wrap;font-family:JetBrains Mono,monospace;font-size:13px">${esc((run.output || '') + (run.error ? '\n' + run.error : ''))}</pre>${run.ok && run.output.trim() !== s.expected_output.trim() ? `<button class="btn sm" style="margin-top:8px" data-act="use-output">Use actual output</button>` : ''}</div>` : ''}` : ''}
+    ${hasBlocksField ? `<details ${s.blocks.length ? 'open' : ''}><summary>Blocks (${allBlockIds(s.blocks).length}) — JSON</summary><p class="dsl-help" style="margin:8px 0">Block ids (b1, b2…) are what SHOW_BLOCK and HIGHLIGHT_BLOCK refer to. Names come from the ${esc(P.label)} block set: ${Object.keys(BLOCK_SETS[P.blockSet].blocks).map(k => `<code>${k}</code>`).join(' ')}</p><textarea class="code" data-blocks="1" rows="10" spellcheck="false">${esc(JSON.stringify(s.blocks.map(stripBlock), null, 2))}</textarea><div class="err small" id="blocks-err" style="color:var(--danger)"></div></details>` : ''}
+  </div>
+  <div class="panel stack"><div class="row" style="justify-content:space-between"><h2>Narration & sync</h2><button class="btn sm" data-act="add-beat">Add beat</button></div>
+    <p class="dsl-help">Each beat is a sentence or two of narration plus the events that happen while it's spoken. One event per line: <code>TYPE_CODE 1-2</code> <code>HIGHLIGHT_CODE 2 "range(5)"</code> <code>SHOW_OUTPUT</code> <code>SHOW_TEXT heading "Loops"</code> <code>SHOW_BLOCK b1</code> <code>MOVE_AGENT forward 3</code> <code>PLACE_BLOCK stone down</code> <code>DEMO collect</code> <code>SHOW_QUIZ 1</code> <code>REVEAL_ANSWER 1</code> <code>SHOW_CHALLENGE "…"</code>. Add <code>@0.5</code> to fire halfway through the sentence.</p>
+    ${s.beats.map((b, j) => `<div class="beat"><div class="bh"><b>Beat ${j+1}</b><button class="btn sm ghost danger" data-act="del-beat" data-j="${j}">Remove</button></div>
+      <label class="field">Narration<textarea data-beat="${j}" data-k="narration">${esc(b.narration)}</textarea></label>
+      <label class="field">Events<textarea class="code" data-beat="${j}" data-k="events" spellcheck="false">${esc(b.events.map(eventToDSL).join('\n'))}</textarea></label>
+      <div class="err" id="beat-err-${j}"></div></div>`).join('')}
+  </div>
+  <div class="panel stack"><h2>Rewrite with AI</h2>
+    <label class="field">What should change? <span class="hint">Optional</span><input type="text" id="regen-note" placeholder="Make it shorter and add a highlight on range()"></label>
+    <div class="row"><button class="btn" data-act="regen-scene">Rewrite this scene</button><span class="small muted" id="regen-status" aria-live="polite"></span></div></div>`;
+}
+function stripBlock(b){ const o = {id:b.id, name:b.name}; if (b.name === 'custom'){ o.label = b.label; o.category = b.category; o.shape = b.shape; } if (Object.keys(b.args).length) o.args = b.args; if (b.children.length) o.children = b.children.map(stripBlock); if (b.else.length) o.else = b.else.map(stripBlock); return o; }
+
+function viewStudio(){
+  const L = App.current;
+  return `<main><div class="page-head"><div>${platformChip(L.platform)}<h1 style="margin-top:10px">${esc(L.lesson_title)}</h1></div>
+  <div class="row"><button class="btn" data-act="back-review">Edit lesson</button></div></div>
+  <div class="studio"><div>
+    <div class="screen"><canvas id="screen" width="1280" height="720" aria-label="Lesson video preview"></canvas>
+      <div class="overlay" id="rec-overlay" hidden><strong id="rec-label">Rendering…</strong><div class="bar"><i id="rec-bar"></i></div><span class="small" id="rec-time"></span><button class="btn sm" id="rec-cancel">Cancel</button></div></div>
+    <div class="transport"><button class="btn primary" id="play" data-act="play" style="min-width:96px">Play</button><button class="btn" data-act="restart">Restart</button>
+      <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Video position"><span class="time" id="time">0:00 / 0:00</span></div>
+    <div class="strip" id="strip"></div>
+    <p class="small muted" style="margin-top:10px">Space plays or pauses. Click a scene to jump to it, then use Edit lesson to change it.</p>
+  </div>
+  <aside class="side">
+    <div class="panel"><h3>Voice & captions</h3><div class="stack">
+      <label class="field small">Narration<select id="opt-voicemode">
+        ${Server.config && Server.config.tts ? `<option value="ai" ${Player.voiceMode === 'ai' ? 'selected' : ''}>AI narrator — recorded into the video</option>` : ''}
+        <option value="browser" ${Player.voiceMode === 'browser' ? 'selected' : ''}>Browser voice — preview only</option>
+        <option value="off" ${Player.voiceMode === 'off' ? 'selected' : ''}>No voice</option></select></label>
+      <label class="field small">Voice<select id="opt-voicename"></select></label>
+      <label class="toggle"><input type="checkbox" id="opt-captions" ${Player.captions ? 'checked' : ''}> Show captions in video</label>
+      <label class="field small">Narration pace<select id="opt-pace">${[[2.2,'Slow'],[2.6,'Normal'],[3.0,'Brisk']].map(([v, l]) => `<option value="${v}" ${Player.wps === v ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      <p class="small muted" id="voice-status" aria-live="polite"></p></div></div>
+    <div class="panel"><h3>Render & export</h3><div class="stack">
+      <button class="btn primary" data-act="render-full">Render full video</button>
+      <button class="btn" data-act="render-scene">Render current scene</button>
+      <button class="btn" data-act="export-vtt">Download captions (.vtt)</button>
+      <p class="small muted" id="render-note"></p></div></div>
+  </aside></div></main>`;
+}
+function mountStudio(){
+  const cv = $('#screen');
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = W * (dpr > 1 ? 1.5 : 1); cv.height = H * (dpr > 1 ? 1.5 : 1);
+  Player.t = 0;
+  Player.attach(cv, App.current);
+  if (App.studioScene != null && Player.tl.scenes[App.studioScene]){ Player.t = Player.tl.scenes[App.studioScene].start; } App.studioScene = null;
+  prepareOutputs(App.current).then(() => Player.draw());
+  const strip = $('#strip');
+  strip.innerHTML = Player.tl.scenes.map((c, i) => `<button data-act="jump" data-i="${i}" style="flex:${(c.end - c.start).toFixed(2)}" title="${esc(c.scene.title)}">${i+1}</button>`).join('');
+  $('#scrub').addEventListener('input', e => Player.seek(Player.tl.total * e.target.value / 1000));
+  $('#opt-captions').onchange = e => { Player.captions = e.target.checked; Player.draw(); };
+  $('#opt-pace').onchange = e => { Player.wps = parseFloat(e.target.value); applyVoiceMode(); };
+  $('#opt-voicemode').onchange = e => { Player.voiceMode = e.target.value; applyVoiceMode(); };
+  $('#opt-voicename').onchange = e => { if (Player.voiceMode === 'ai') VoiceAI.voice = e.target.value; else Player.voiceName = e.target.value; applyVoiceMode(); };
+  if (window.speechSynthesis) speechSynthesis.onvoiceschanged = () => { if (Player.voiceMode === 'browser') fillVoiceNames(); };
+  applyVoiceMode();
+  updateRenderNote();
+  updateTransport();
+}
+function fillVoiceNames(){
+  const sel = $('#opt-voicename'); if (!sel) return;
+  if (Player.voiceMode === 'ai'){
+    const vs = (Server.config && Server.config.voices) || ['nova'];
+    sel.innerHTML = vs.map(v => `<option ${v === VoiceAI.voice ? 'selected' : ''} value="${esc(v)}">${esc(v[0].toUpperCase() + v.slice(1))}</option>`).join('');
+    sel.disabled = false;
+  } else if (Player.voiceMode === 'browser' && window.speechSynthesis){
+    const vs = speechSynthesis.getVoices().filter(v => /^en/i.test(v.lang));
+    if (!Player.voiceName && vs[0]) Player.voiceName = vs[0].name;
+    sel.innerHTML = vs.length ? vs.map(v => `<option ${v.name === Player.voiceName ? 'selected' : ''}>${esc(v.name)}</option>`).join('') : '<option>Default voice</option>';
+    sel.disabled = false;
+  } else { sel.innerHTML = '<option>—</option>'; sel.disabled = true; }
+}
+function updateRenderNote(){
+  const el = $('#render-note'); if (!el) return;
+  const mime = pickMime(Player.voiceMode === 'ai');
+  if (!mime){ el.textContent = 'This browser cannot record video. Use Chrome or Edge to export.'; return; }
+  const fmt = mime.includes('mp4') || (Server.config && Server.config.ffmpeg) ? 'MP4' : 'WebM';
+  el.textContent = `Exports ${fmt} with captions burned in${Player.voiceMode === 'ai' ? ' and the AI narrator on the soundtrack' : ''}. Rendering runs in real time.` +
+    (Player.voiceMode === 'browser' ? ' The browser voice is preview-only and is not recorded — choose the AI narrator to include voice.' : '');
+}
+async function applyVoiceMode(){
+  if (Player.voiceMode === 'browser' && !window.speechSynthesis) Player.voiceMode = 'off';
+  Player.pause();
+  Player.voice = Player.voiceMode !== 'off';
+  VoiceAI.enabled = Player.voiceMode === 'ai';
+  fillVoiceNames(); updateRenderNote();
+  const status = $('#voice-status');
+  if (VoiceAI.enabled){
+    const token = {}; applyVoiceMode.token = token;
+    try {
+      await VoiceAI.prepare(Player.lesson, (d, n) => { if (status && applyVoiceMode.token === token) status.textContent = d < n ? `Generating narration… ${d} of ${n} sentences` : ''; });
+      if (applyVoiceMode.token !== token) return;
+      if (status) status.textContent = 'Narration ready. Timing now follows the real voice.';
+    } catch (e) { if (status) status.textContent = 'Narrator voice failed: ' + e.message; }
+  } else if (status) status.textContent = Player.voiceMode === 'browser' ? 'The preview waits for the voice to finish each sentence.' : '';
+  const ci = Player.tl ? sceneAt(Player.tl, Player.t).index : null;
+  Player.rebuild();
+  if (ci != null && Player.tl.scenes[ci]) Player.t = Player.tl.scenes[ci].start;
+  mountStripOnly(); updateTransport(); Player.draw();
+}
+function mountStripOnly(){ const strip = $('#strip'); if (strip) strip.innerHTML = Player.tl.scenes.map((c, i) => `<button data-act="jump" data-i="${i}" style="flex:${(c.end - c.start).toFixed(2)}" title="${esc(c.scene.title)}">${i+1}</button>`).join(''); }
+function updateTransport(){
+  if (App.view !== 'studio' || !Player.tl) return;
+  const sc = $('#scrub'), tm = $('#time'), pb = $('#play');
+  if (sc && document.activeElement !== sc) sc.value = Math.round(1000 * Player.t / Math.max(0.01, Player.tl.total));
+  if (tm) tm.textContent = `${fmtTime(Player.t)} / ${fmtTime(Player.tl.total)}`;
+  if (pb) pb.textContent = Player.playing ? 'Pause' : 'Play';
+  const cur = sceneAt(Player.tl, Player.t);
+  $$('#strip button').forEach((b, i) => b.classList.toggle('on', cur && i === cur.index));
+}
+
+/* ---------- actions ---------- */
+async function startGeneration(form){
+  App.form = form;
+  const ctl = new AbortController();
+  App.gen = {form, steps:[], error:null, ctl};
+  go('generating');
+  const onStep = s => {
+    const ex = App.gen.steps.find(x => x.key === s.key);
+    if (ex) Object.assign(ex, Object.fromEntries(Object.entries(s).filter(([, v]) => v != null)));
+    else App.gen.steps.push(Object.assign({label:'', sub:''}, s));
+    if (App.view === 'generating') render();
+  };
+  try {
+    const {lesson, failures} = await generateLesson(form, onStep, ctl.signal);
+    App.lessons[lesson.id] = lesson; App.current = lesson; App.issues = {};
+    lesson.scenes.forEach(s => { App.issues[s.scene_id] = s._warnings || []; });
+    await Store.saveLesson(lesson);
+    go('review', {sel:'overview'});
+    toast(failures.length ? `Lesson created. ${failures.length} scene${failures.length > 1 ? 's' : ''} need your attention.` : 'Lesson created. Review it, then generate the video.');
+  } catch (e) {
+    App.gen.steps.forEach(s => { if (s.state === 'run') s.state = 'fail'; });
+    App.gen.error = aiErrorCopy(e);
+    if (App.view === 'generating') render();
+  }
+}
+function openLesson(id, view='review'){
+  const l = App.lessons[id]; if (!l) return;
+  validateLesson(l);
+  App.current = l; App.issues = {};
+  go(view, {sel:'overview'});
+}
+
+document.addEventListener('click', async e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const act = el.dataset.act, L = App.current;
+  switch (act){
+    case 'home': go(App.profile ? 'dashboard' : 'auth'); break;
+    case 'auth-switch': App.authMode = App.authMode === 'login' ? 'signup' : 'login'; render(); break;
+    case 'logout': try { await api('POST', '/api/auth/logout', {}); } catch {} App.profile = null; App.lessons = {}; App.current = null; go('auth', {authMode:'login'}); break;
+    case 'new': App.form = null; go('create'); break;
+    case 'edit-form': go('create'); break;
+    case 'sample': { const l = makeSample(el.dataset.p); App.lessons[l.id] = l; await Store.saveLesson(l); openLesson(l.id, 'studio'); break; }
+    case 'open': openLesson(el.dataset.id); break;
+    case 'open-studio': openLesson(el.dataset.id, 'studio'); break;
+    case 'delete': { const l = App.lessons[el.dataset.id]; if (l && confirm(`Delete "${l.lesson_title}"? This can't be undone.`)){ delete App.lessons[l.id]; await Store.deleteLesson(l.id); render(); toast('Lesson deleted.'); } break; }
+    case 'stop-gen': App.gen.ctl.abort(); App.gen.error = 'Generation stopped.'; render(); break;
+    case 'retry-gen': startGeneration(App.gen.form); break;
+    case 'sel': App.sel = el.dataset.i === 'overview' ? 'overview' : +el.dataset.i; render(); break;
+    case 'studio': App.studioScene = null; go('studio'); break;
+    case 'back-review': go('review'); break;
+    case 'add-scene': L.scenes.push({scene_id:uid('scene'), scene_type:'explanation', title:'New scene', visual_description:'', code:'', blocks:[], expected_output:'', beats:[{narration:'Describe what this scene teaches.', events:[{type:'SHOW_TEXT', style:'heading', text:'New scene'}]}]}); App.sel = L.scenes.length - 1; saveSoon(); render(); break;
+    case 'scene-up': case 'scene-down': { const i = App.sel, j = act === 'scene-up' ? i - 1 : i + 1; [L.scenes[i], L.scenes[j]] = [L.scenes[j], L.scenes[i]]; App.sel = j; saveSoon(); render(); break; }
+    case 'scene-del': if (L.scenes.length > 1 && confirm('Delete this scene?')){ L.scenes.splice(App.sel, 1); App.sel = Math.min(App.sel, L.scenes.length - 1); saveSoon(); render(); } break;
+    case 'add-beat': L.scenes[App.sel].beats.push({narration:'', events:[]}); saveSoon(); render(); break;
+    case 'del-beat': L.scenes[App.sel].beats.splice(+el.dataset.j, 1); saveSoon(); render(); break;
+    case 'add-mistake': L.common_mistakes.push({mistake:'New mistake', fix:''}); saveSoon(); render(); break;
+    case 'add-q': L.quiz.push({question:'New question', options:['Option A','Option B','Option C','Option D'], answer_index:0, explanation:''}); saveSoon(); render(); break;
+    case 'del-q': L.quiz.splice(+el.dataset.i, 1); saveSoon(); render(); break;
+    case 'run-code': { el.disabled = true; el.textContent = 'Running…'; const s = L.scenes[App.sel]; runCache.delete(s.code); const r = await runPython(s.code); if (r.unavailable) toast('The Python sandbox could not load in this view.'); render(); break; }
+    case 'use-output': { const s = L.scenes[App.sel]; const r = runCache.get(s.code); if (r) { s.expected_output = r.output.replace(/\n$/, ''); saveSoon(); render(); } break; }
+    case 'preview-scene': App.studioScene = App.sel; go('studio'); break;
+    case 'regen-scene': regenScene(el); break;
+    case 'export-json': saveFile(safeName(L.lesson_title) + '.json', JSON.stringify(stripRuntime(L), null, 2)); break;
+    case 'play': Player.playing ? Player.pause() : Player.play(); break;
+    case 'restart': Player.seek(0); break;
+    case 'jump': Player.seek(Player.tl.scenes[+el.dataset.i].start); break;
+    case 'render-full': recordRange(0, Player.tl.total, 'full lesson'); break;
+    case 'render-scene': { const c = sceneAt(Player.tl, Player.t); recordRange(c.start, c.end, `scene ${c.index + 1}`); break; }
+    case 'export-vtt': saveFile(safeName(L.lesson_title) + '.vtt', buildVTT(Player.tl)); break;
+  }
+});
+document.addEventListener('keydown', e => {
+  if (App.view !== 'studio' || e.code !== 'Space') return;
+  if (/INPUT|TEXTAREA|SELECT|BUTTON/.test(document.activeElement?.tagName || '')) return;
+  e.preventDefault(); Player.playing ? Player.pause() : Player.play();
+});
+document.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (e.target.id === 'auth-form'){
+    const fd = new FormData(e.target), signup = App.authMode !== 'login' && Server.config.signup;
+    const err = $('#auth-err'); err.hidden = true;
+    const btn = e.target.querySelector('button[type=submit]'); btn.disabled = true;
+    try {
+      const body = {email:String(fd.get('email') || ''), password:String(fd.get('password') || '')};
+      if (signup){ body.name = String(fd.get('name') || ''); body.org = String(fd.get('org') || ''); }
+      const r = await api('POST', signup ? '/api/auth/signup' : '/api/auth/login', body, {noAuthRedirect:true});
+      App.profile = r.user; Server.config.user = r.user;
+      App.lessons = (await Store.loadAll()).lessons;
+      go('dashboard');
+    } catch (ex) { err.textContent = ex.message; err.hidden = false; btn.disabled = false; }
+    return;
+  }
+  if (e.target.id === 'create-form'){
+    const fd = new FormData(e.target);
+    const form = {platform:fd.get('platform'), topic:String(fd.get('topic')).trim(), age:fd.get('age'), difficulty:fd.get('difficulty'), duration:+fd.get('duration'), style:fd.get('style'), objective:String(fd.get('objective')).trim(), extra:String(fd.get('extra')).trim().slice(0, 1500)};
+    if (!form.topic){ toast('Add a topic first.'); return; }
+    startGeneration(form);
+  }
+});
+document.addEventListener('input', e => {
+  const t = e.target, L = App.current; if (!L || App.view !== 'review') return;
+  if (t.dataset.f){ L[t.dataset.f] = t.dataset.list ? t.value.split('\n').map(s => s.trim()).filter(Boolean) : t.value; saveSoon(); }
+  else if (t.dataset.cm != null){ L.common_mistakes[+t.dataset.cm][t.dataset.k] = t.value; saveSoon(); }
+  else if (t.dataset.q != null){
+    const qq = L.quiz[+t.dataset.q];
+    if (t.dataset.k === 'opt') qq.options[+t.dataset.j] = t.value;
+    else if (t.dataset.k === 'answer') qq.answer_index = +t.value;
+    else qq[t.dataset.k] = t.value;
+    saveSoon();
+  }
+  else if (t.dataset.s){ L.scenes[App.sel][t.dataset.s] = t.value; saveSoon(); }
+  else if (t.dataset.beat != null && t.dataset.k === 'narration'){ L.scenes[App.sel].beats[+t.dataset.beat].narration = t.value; saveSoon(); }
+});
+document.addEventListener('change', e => {
+  const t = e.target, L = App.current; if (!L || App.view !== 'review') return;
+  const s = typeof App.sel === 'number' ? L.scenes[App.sel] : null;
+  if (s && t.dataset.beat != null && t.dataset.k === 'events'){
+    const r = parseDSL(t.value);
+    const box = $('#beat-err-' + t.dataset.beat);
+    if (r.errors.length){ box.textContent = r.errors.join(' '); return; }
+    s.beats[+t.dataset.beat].events = r.events;
+    revalidateScene(L, s); saveSoon(); render();
+  } else if (s && t.dataset.blocks){
+    try { s.blocks = JSON.parse(t.value); revalidateScene(L, s); saveSoon(); render(); }
+    catch (err) { $('#blocks-err').textContent = 'That JSON is not valid: ' + err.message; }
+  } else if (s && (t.dataset.s === 'code' || t.dataset.s === 'title' || t.dataset.s === 'scene_type')){
+    revalidateScene(L, s); saveSoon(); render();
+  }
+});
+function revalidateScene(L, s){ const r = validateScene(s, L.platform, L.quiz.length); App.issues[s.scene_id] = [...r.errors, ...r.warnings]; }
+
+async function regenScene(btn){
+  const L = App.current, i = App.sel, s = L.scenes[i];
+  const note = $('#regen-note').value.trim(), status = $('#regen-status');
+  btn.disabled = true; status.textContent = 'Thinking… this can take up to a minute.';
+  const form = L.form || {platform:L.platform, age:L.grade || '12–14 years', difficulty:(L.difficulty||'beginner').replace(/^./, c => c.toUpperCase()), style:L.teaching_style || 'Friendly', duration:L.duration_minutes || 8, topic:L.topic || L.lesson_title};
+  const outline = {lesson_title:L.lesson_title, final_program:L.final_program || '', quiz:L.quiz, challenge:L.challenge, common_mistakes:L.common_mistakes, practice_activity:L.practice_activity, recap:L.recap,
+    scenes:L.scenes.map(x => ({scene_id:x.scene_id, scene_type:x.scene_type, title:x.title, goal:x.visual_description || x.title}))};
+  const target = Object.assign({}, outline.scenes[i], {duration_seconds: Math.max(20, Math.round(s.beats.reduce((a, b) => a + words(b.narration), 0) / 2.5))});
+  const current = `CURRENT VERSION OF THIS SCENE (improve it): ${JSON.stringify({code:s.code, blocks:s.blocks.map(stripBlock), expected_output:s.expected_output, beats:s.beats}).slice(0, 6000)}`;
+  try {
+    const ns = await generateScene(form, outline, target, i, {instruction:(note ? note + '\n' : '') + current, noCache:true});
+    L.scenes[i] = ns; App.issues[ns.scene_id] = ns._warnings || []; saveSoon(); render(); toast('Scene rewritten.');
+  } catch (e) { status.textContent = aiErrorCopy(e); btn.disabled = false; }
+}
+
+/* ---------- sample lessons (compact authoring with the event DSL) ---------- */
+const SAMPLE_TITLES = {python:'Repeat it! Python for loops', scratch:'Collect the star', roblox:'Coins that count', minecraft:'Agent builds a wall'};
+function B(n, e){ return {narration:n, events:e.map(s => parseDSL(s).events[0]).filter(Boolean)}; }
+function makeSample(p){
+  const base = {id:uid('l'), createdAt:Date.now(), updatedAt:Date.now(), platform:p, difficulty:'beginner', duration_minutes:3, teaching_style:'Friendly', sample:true};
+  let L;
+  if (p === 'python') L = {...base, grade:'12–14 years', topic:'For loops', lesson_title:SAMPLE_TITLES.python,
+    learning_objectives:['Explain what a for loop does','Use range() to repeat code a set number of times','Use the loop variable inside the loop'],
+    prerequisites:['Using print()','Basic variables'],
+    final_program:'for i in range(5):\n    print("Hello")',
+    common_mistakes:[{mistake:'Forgetting the colon after range(5)', fix:'Every for line ends with a colon'},{mistake:'Not indenting the loop body', fix:'Indent the repeated lines by 4 spaces'},{mistake:'Expecting range(5) to count 1 to 5', fix:'range(5) counts 0, 1, 2, 3, 4'}],
+    practice_activity:'Write a loop that prints the numbers 1 to 10.', challenge:'Can you modify the program so that it prints your name five times?',
+    recap:'A for loop repeats the indented lines. range(5) gives five turns, and the loop variable tells you which turn you are on.',
+    quiz:[{question:'How many times does print run in: for i in range(3)?', options:['2','3','4','It never runs'], answer_index:1, explanation:'range(3) gives 0, 1 and 2 — three turns.'},{question:'What is the first value of i in range(5)?', options:['1','5','0','-1'], answer_index:2, explanation:'range starts counting at 0.'}],
+    scenes:[
+      {scene_id:'scene_1', scene_type:'intro', title:'Why repeat yourself?', code:'', blocks:[], expected_output:'', beats:[
+        B('Imagine you had to say hello five times. You could write print five times, but programmers have a better way.', ['SHOW_TEXT heading "Repeat it with a for loop"']),
+        B('Today you will learn the for loop, which repeats instructions for you.', ['SHOW_TEXT "A loop repeats instructions"']),
+        B('By the end, you will control exactly how many times your code runs.', ['SHOW_TEXT "range() sets how many times"'])]},
+      {scene_id:'scene_2', scene_type:'code_walkthrough', title:'Building the loop', code:'for i in range(5):\n    print("Hello")', blocks:[], expected_output:'Hello\nHello\nHello\nHello\nHello', beats:[
+        B('First, we type the word for, which starts our loop.', ['TYPE_CODE 1', 'HIGHLIGHT_CODE 1 "for"']),
+        B('range of five means: do this five times. Python counts zero, one, two, three, four.', ['HIGHLIGHT_CODE 1 "range(5)"', 'SHOW_TEXT callout "range(5) → 0, 1, 2, 3, 4"']),
+        B('The colon at the end tells Python that the repeated part comes next.', ['HIGHLIGHT_CODE 1 ":"']),
+        B('Now we indent and write print hello. Everything indented runs on every turn.', ['TYPE_CODE 2', 'HIGHLIGHT_CODE 2 "print"']),
+        B('Let\'s run it and see what happens.', ['CLEAR_HIGHLIGHT', 'SHOW_OUTPUT']),
+        B('Five hellos, from just two lines of code!', ['SHOW_TEXT fix "2 lines → 5 hellos"'])]},
+      {scene_id:'scene_3', scene_type:'demonstration', title:'Using the loop variable', code:'for i in range(5):\n    print("Turn", i)', blocks:[], expected_output:'Turn 0\nTurn 1\nTurn 2\nTurn 3\nTurn 4', beats:[
+        B('The letter i holds the turn number. Let\'s print it.', ['SHOW_CODE 1', 'HIGHLIGHT_CODE 1 "i"']),
+        B('We change our print line to show the word Turn and the value of i.', ['TYPE_CODE 2', 'HIGHLIGHT_CODE 2 "i"']),
+        B('Run it, and watch i count up from zero.', ['CLEAR_HIGHLIGHT', 'SHOW_OUTPUT'])]},
+      {scene_id:'scene_4', scene_type:'common_mistakes', title:'Watch out for these', code:'', blocks:[], expected_output:'', beats:[
+        B('Here are mistakes almost everyone makes at first.', ['SHOW_TEXT heading "Common mistakes"']),
+        B('Forgetting the colon. Every for line needs one at the end.', ['SHOW_TEXT mistake "for i in range(5)   ← missing :"']),
+        B('Forgetting to indent. Only indented lines are repeated.', ['SHOW_TEXT mistake "print not indented"']),
+        B('Fix both, and your loop will work every time.', ['SHOW_TEXT fix "Colon + indent = working loop"'])]},
+      {scene_id:'scene_5', scene_type:'challenge', title:'Your turn', code:'', blocks:[], expected_output:'', beats:[
+        B('Now it\'s your turn to try.', ['SHOW_TEXT heading "Challenge time"']),
+        B('Can you modify the program so that it prints your name five times?', ['SHOW_CHALLENGE "Modify the program so it prints your name five times."']),
+        B('Pause the video, try it, and then check your output.', [])]},
+      {scene_id:'scene_6', scene_type:'quiz', title:'Quick check', code:'', blocks:[], expected_output:'', beats:[
+        B('Quick question. How many times does print run in a loop over range of three?', ['SHOW_QUIZ 1']),
+        B('The answer is three: zero, one and two.', ['REVEAL_ANSWER 1']),
+        B('And what is the very first value of i in range of five?', ['SHOW_QUIZ 2']),
+        B('Zero. Python starts counting at zero. Great work today!', ['REVEAL_ANSWER 2'])]}
+    ]};
+  if (p === 'scratch') L = {...base, grade:'9–11 years', topic:'Variables and forever loops', lesson_title:SAMPLE_TITLES.scratch,
+    learning_objectives:['Create a score variable','Use forever and if to check for touching','Change a variable when something happens'],
+    prerequisites:['Dragging blocks','The green flag'], final_program:'when flag clicked → set score to 0 → forever: move, if touching Star then change score by 1',
+    common_mistakes:[{mistake:'Putting set score inside forever', fix:'Set the score once, before the loop'}], practice_activity:'Add a second star.', challenge:'Make the sprite say "You win!" when the score reaches 3.', recap:'Variables remember numbers. forever keeps checking, and if decides when to act.',
+    quiz:[{question:'Where should "set score to 0" go?', options:['Inside forever','Before forever','At the very end','Nowhere'], answer_index:1, explanation:'It should run once, before the loop starts.'}],
+    scenes:[
+      {scene_id:'scene_1', scene_type:'code_walkthrough', title:'Building the script', code:'', expected_output:'The score goes up by 1 when Pip touches the star.', blocks:[
+        {id:'b1', name:'when_flag_clicked', args:{}, children:[], else:[]},
+        {id:'b2', name:'set_variable', args:{VAR:'score', VALUE:'0'}, children:[], else:[]},
+        {id:'b3', name:'forever', args:{}, else:[], children:[
+          {id:'b4', name:'move_steps', args:{STEPS:'10'}, children:[], else:[]},
+          {id:'b5', name:'if', args:{CONDITION:'touching Star?'}, else:[], children:[{id:'b6', name:'change_variable', args:{VAR:'score', VALUE:'1'}, children:[], else:[]}]}]}],
+        beats:[
+        B('Every Scratch program starts with an event. We use when green flag clicked.', ['SHOW_BLOCK b1', 'HIGHLIGHT_BLOCK b1']),
+        B('Next we set our score to zero, so every game starts fresh.', ['SHOW_BLOCK b2', 'HIGHLIGHT_BLOCK b2', 'DEMO set_var "score=0"']),
+        B('The forever block repeats everything inside it, again and again.', ['SHOW_BLOCK b3', 'HIGHLIGHT_BLOCK b3']),
+        B('Inside forever, our sprite moves ten steps each time.', ['SHOW_BLOCK b4', 'HIGHLIGHT_BLOCK b4', 'DEMO move 60']),
+        B('Then we check: if we are touching the star...', ['SHOW_BLOCK b5', 'HIGHLIGHT_BLOCK b5']),
+        B('...change score by one!', ['SHOW_BLOCK b6', 'HIGHLIGHT_BLOCK b6']),
+        B('Let\'s watch it work. Pip reaches the star, and the score goes up.', ['CLEAR_HIGHLIGHT', 'DEMO collect', 'DEMO say "Got it!"', 'SHOW_OUTPUT'])]},
+      {scene_id:'scene_2', scene_type:'quiz', title:'Quick check', code:'', blocks:[], expected_output:'', beats:[
+        B('Where should the set score to zero block go?', ['SHOW_QUIZ 1']),
+        B('Before the forever loop, so it only happens once.', ['REVEAL_ANSWER 1'])]},
+      {scene_id:'scene_3', scene_type:'challenge', title:'Your challenge', code:'', blocks:[], expected_output:'', beats:[
+        B('Here is your challenge.', ['SHOW_TEXT heading "Challenge"']),
+        B('Make the sprite say you win when the score reaches three.', ['SHOW_CHALLENGE "Make the sprite say \\"You win!\\" when the score reaches 3."'])]}
+    ]};
+  if (p === 'roblox') L = {...base, grade:'12–14 years', topic:'Touched events', lesson_title:SAMPLE_TITLES.roblox,
+    learning_objectives:['Get a part with script.Parent','Connect to the Touched event','Run code when a player touches a part'],
+    prerequisites:['Inserting a Part and a Script in Studio'], final_program:'local coin = script.Parent\n\ncoin.Touched:Connect(function(hit)\n    print("Coin collected")\n    coin:Destroy()\nend)',
+    common_mistakes:[{mistake:'Using a dot instead of a colon for Connect', fix:'Write Touched:Connect'}], practice_activity:'Change the coin color when touched.', challenge:'Only collect the coin if the thing touching it belongs to a player.', recap:'Events let code react. Touched fires when something bumps the part.',
+    quiz:[{question:'What does script.Parent refer to here?', options:['The player','The coin part','The whole game','The Output window'], answer_index:1, explanation:'The script is inside the coin, so its parent is the coin.'}],
+    scenes:[
+      {scene_id:'scene_1', scene_type:'code_walkthrough', title:'Scripting the coin', code:'local coin = script.Parent\n\ncoin.Touched:Connect(function(hit)\n    print("Coin collected")\n    coin:Destroy()\nend)', blocks:[], expected_output:'Coin collected', beats:[
+        B('Our script lives inside the coin. script dot Parent gives us that coin.', ['TYPE_CODE 1-2', 'HIGHLIGHT_CODE 1 "script.Parent"']),
+        B('Touched is an event. It fires whenever something bumps into the coin.', ['TYPE_CODE 3', 'HIGHLIGHT_CODE 3 "Touched"']),
+        B('We use Connect with a colon to run our function when that happens.', ['HIGHLIGHT_CODE 3 ":Connect"']),
+        B('Inside, we print a message and destroy the coin.', ['TYPE_CODE 4-6', 'HIGHLIGHT_CODE 4-5']),
+        B('Press play. Our player walks into the coin...', ['CLEAR_HIGHLIGHT', 'DEMO touch']),
+        B('The message appears in Output, and the coin disappears.', ['SHOW_OUTPUT', 'DEMO disappear'])]},
+      {scene_id:'scene_2', scene_type:'quiz', title:'Quick check', code:'', blocks:[], expected_output:'', beats:[
+        B('What does script dot Parent refer to in this script?', ['SHOW_QUIZ 1']),
+        B('The coin part, because the script is inside it.', ['REVEAL_ANSWER 1'])]}
+    ]};
+  if (p === 'minecraft') L = {...base, grade:'9–11 years', topic:'Agent loops', lesson_title:SAMPLE_TITLES.minecraft,
+    learning_objectives:['Run code from a chat command','Make the Agent place blocks','Use repeat to avoid copying blocks'],
+    prerequisites:['Opening Code Builder in Minecraft Education'], final_program:'player.onChat("wall", function () {\n    for (let i = 0; i < 4; i++) {\n        agent.place(DOWN)\n        agent.move(FORWARD, 1)\n    }\n})',
+    common_mistakes:[{mistake:'Agent has no blocks in its inventory', fix:'Use agent set block or item first'}], practice_activity:'Make the wall 6 blocks long.', challenge:'Make the Agent build a wall two blocks high.', recap:'A chat command starts the code, and repeat lets the Agent do the same steps many times.',
+    quiz:[{question:'How many blocks does the Agent place with repeat 4?', options:['1','3','4','8'], answer_index:2, explanation:'One block on each of the 4 repeats.'}],
+    scenes:[
+      {scene_id:'scene_1', scene_type:'code_walkthrough', title:'Coding the Agent', code:'player.onChat("wall", function () {\n    for (let i = 0; i < 4; i++) {\n        agent.place(DOWN)\n        agent.move(FORWARD, 1)\n    }\n})', expected_output:'The Agent places a row of 4 stone blocks.', blocks:[
+        {id:'b1', name:'on_chat', args:{COMMAND:'wall'}, children:[], else:[]},
+        {id:'b2', name:'repeat', args:{TIMES:'4'}, else:[], children:[
+          {id:'b3', name:'agent_place', args:{DIRECTION:'down'}, children:[], else:[]},
+          {id:'b4', name:'agent_move', args:{DIRECTION:'forward', BLOCKS:'1'}, children:[], else:[]}]}],
+        beats:[
+        B('We start with on chat command. When we type wall in chat, this code runs.', ['SHOW_BLOCK b1', 'HIGHLIGHT_BLOCK b1']),
+        B('A repeat block does the same steps four times.', ['SHOW_BLOCK b2', 'HIGHLIGHT_BLOCK b2']),
+        B('Each time, the Agent places a block below itself...', ['SHOW_BLOCK b3', 'HIGHLIGHT_BLOCK b3']),
+        B('...and moves forward one block.', ['SHOW_BLOCK b4', 'HIGHLIGHT_BLOCK b4']),
+        B('Let\'s type wall in chat and watch the Agent work.', ['CLEAR_HIGHLIGHT', 'HIGHLIGHT_BLOCK b2']),
+        B('Place, move. Place, move. Place, move. Place, move. Four blocks!', ['PLACE_BLOCK stone down', 'MOVE_AGENT forward 1', 'PLACE_BLOCK stone down', 'MOVE_AGENT forward 1', 'PLACE_BLOCK stone down', 'MOVE_AGENT forward 1', 'PLACE_BLOCK stone down', 'MOVE_AGENT forward 1'])]},
+      {scene_id:'scene_2', scene_type:'quiz', title:'Quick check', code:'', blocks:[], expected_output:'', beats:[
+        B('How many blocks does the Agent place with repeat four?', ['SHOW_QUIZ 1']),
+        B('Four. One block on every repeat.', ['REVEAL_ANSWER 1'])]}
+    ]};
+  validateLesson(L);
+  return L;
+}
+
+/* ---------- boot ---------- */
+(async function boot(){
+  try { Server.config = await api('GET', '/api/config', undefined, {noAuthRedirect:true}); }
+  catch (e) { go('fatal', {fatal:e.message}); return; }
+  Player.voiceMode = Server.config.tts ? 'ai' : (window.speechSynthesis ? 'browser' : 'off');
+  if (Server.config.voices && Server.config.voices.length) VoiceAI.voice = Server.config.voices[0];
+  App.profile = Server.config.user;
+  try { await document.fonts.ready; } catch {}
+  if (!App.profile){ go('auth', {authMode: Server.config.signup ? 'signup' : 'login'}); return; }
+  try { App.lessons = (await Store.loadAll()).lessons; } catch (e) { if (e.status === 401) return; toast('Could not load lessons: ' + e.message); }
+  go('dashboard');
+})();
+</script>
+</body>
+</html>

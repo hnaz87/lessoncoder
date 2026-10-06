@@ -1,0 +1,37 @@
+{
+  "name": "CodeLesson AI",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    }
+  },
+  "forwardPorts": [
+    3000
+  ],
+  "portsAttributes": {
+    "3000": {
+      "label": "CodeLesson AI",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "secrets": {
+    "GEMINI_API_KEY": {
+      "description": "Required. Free key from https://aistudio.google.com/apikey \u2014 used for lessons and the narrator voice."
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postStartCommand": "bash .devcontainer/start.sh",
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb"
+  },
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "README.md"
+      ]
+    }
+  }
+}

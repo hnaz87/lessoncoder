@@ -1,0 +1,39 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+      SANDBOX_MODE: socket
+      SANDBOX_SOCKET: /sock/sandbox.sock
+    volumes:
+      - appdata:/data
+      - sandbox-sock:/sock
+    depends_on:
+      - sandbox
+    restart: unless-stopped
+
+  # Untrusted Python runs here: no network, read-only root, tiny tmpfs, hard resource caps,
+  # no secrets (it gets no env_file), and only the capabilities needed to drop to an unprivileged user.
+  sandbox:
+    build: ./sandbox
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    volumes:
+      - sandbox-sock:/sock
+    cap_drop: [ALL]
+    cap_add: [SETUID, SETGID, KILL, CHOWN, DAC_OVERRIDE, FOWNER]
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    cpus: 1.0
+    pids_limit: 128
+    restart: unless-stopped
+
+volumes:
+  appdata:
+  sandbox-sock:
